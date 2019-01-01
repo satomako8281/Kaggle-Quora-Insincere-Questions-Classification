@@ -1,22 +1,22 @@
 import numpy as np
 import pandas as pd
-from tqdm.auto import tqdm
-from sklearn.model_selection import StratifiedKFold
 import torch
-
+from config import (
+    STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
+)
 from dataset import load_and_prec
 from embeddings import make_embedding_matrix
 from eval import bestThresshold
 from layers import NeuralNet
-from run import train, pred
-from config import (
-    STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
-)
 from learning_rate import CyclicLR
+from run import train, pred
+from sklearn.model_selection import StratifiedKFold
+from tqdm.auto import tqdm
 
 tqdm.pandas(desc='Progress')
 
-USE_LOAD_FILES = True
+USE_LOAD_CASED_DATASET = True
+USE_LOAD_CASHED_EMBEDDINGS = True
 DEBUG = True
 PILOT_STUDY = True
 
@@ -24,8 +24,8 @@ seed_everything(SEED)
 set_dataset_file(DEBUG)
 set_pilot_study_config(PILOT_STUDY)
 
-x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_FILES)
-embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_FILES)
+x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
+embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
 
 train_preds = np.zeros((len(x_train)))
 test_preds = np.zeros((len(x_test)))
