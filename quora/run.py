@@ -13,7 +13,7 @@ def train(
     model, loss_fn, optimizer, scheduler=None
 ):
     train_loader = make_loader(x_train, y=y_train)
-    valid_loader = make_loader(x_valid, y=y_valid)
+    valid_loader = make_loader(x_valid, y=y_valid, shuffle=False)
     for epoch in range(N_EPOCHS):
         start_time = time.time()
 
@@ -62,7 +62,7 @@ def pred(model, x_test, test_features):
 
 def make_loader(X, *, y=None, shuffle=True):
     x_fold = torch.tensor(X, dtype=torch.long).cuda()
-    if y:
+    if y is not None:
         y_fold = torch.tensor(y, dtype=torch.float32).cuda()
         dataset = torch.utils.data.TensorDataset(x_fold, y_fold)
     else:

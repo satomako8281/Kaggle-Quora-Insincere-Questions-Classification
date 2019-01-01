@@ -4,27 +4,25 @@ from tqdm.auto import tqdm
 from sklearn.model_selection import StratifiedKFold
 import torch
 
-from config import seed_everything, N_SPLITS, SEED
 from dataset import load_and_prec
 from embeddings import make_embedding_matrix
 from eval import bestThresshold
 from layers import NeuralNet
 from run import train, pred
-from config import STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA
+from config import (
+    STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
+)
 from learning_rate import CyclicLR
 
 tqdm.pandas(desc='Progress')
-seed_everything(SEED)
 
 USE_LOAD_FILES = True
 DEBUG = True
+PILOT_STUDY = True
 
-X_TRAIN_ARRAY = "x_train_for_debug.npy" if DEBUG else "x_train.npy"
-X_TEST_ARRAY = "x_test_for_debug.npy" if DEBUG else "x_test.npy"
-Y_TRAIN_ARRAY = "y_train_for_debug.npy" if DEBUG else "y_train.npy"
-FEATURES_ARRAY = "features_for_debug.npy" if DEBUG else "features.npy"
-TEST_FEATURES_ARRAY = "test_features_for_debug.npy" if DEBUG else "test_features.npy"
-WORD_INDEX_ARRAY = "word_index_for_debug.npy" if DEBUG else "word_index.npy"
+seed_everything(SEED)
+set_dataset_file(DEBUG)
+set_pilot_study_config(PILOT_STUDY)
 
 x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_FILES)
 embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_FILES)

@@ -4,7 +4,7 @@ import random
 import numpy as np
 import torch
 
-DEBUG = True
+DEBUG :bool = False
 
 SEED = 1029
 
@@ -52,4 +52,24 @@ def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
+
+def set_dataset_file(DEBUG):
+    global X_TRAIN_ARRAY
+    global X_TEST_ARRAY
+    global Y_TRAIN_ARRAY
+    global FEATURES_ARRAY
+    global TEST_FEATURES_ARRAY
+    global WORD_INDEX_ARRAY
+    X_TRAIN_ARRAY = "x_train_for_debug.npy" if DEBUG else "x_train.npy"
+    X_TEST_ARRAY = "x_test_for_debug.npy" if DEBUG else "x_test.npy"
+    Y_TRAIN_ARRAY = "y_train_for_debug.npy" if DEBUG else "y_train.npy"
+    FEATURES_ARRAY = "features_for_debug.npy" if DEBUG else "features.npy"
+    TEST_FEATURES_ARRAY = "test_features_for_debug.npy" if DEBUG else "test_features.npy"
+    WORD_INDEX_ARRAY = "word_index_for_debug.npy" if DEBUG else "word_index.npy"
+
+def set_pilot_study_config(PILOT_STUDY):
+    global N_SPLITS
+    global N_EPOCHS
+    N_SPLITS = 2 if PILOT_STUDY else 5
+    N_EPOCHS = 1 if PILOT_STUDY else 5
 
