@@ -84,7 +84,10 @@ VALIDATION_SIZE = 100
 def setup_custom_logger(name):
     formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
-    handler = logging.FileHandler(f'../output/log/log-{os.getpid()}.txt', mode='w')
+    filepath = os.path.dirname(os.path.join('./output', 'log'))
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
+    handler = logging.FileHandler(os.path.join(filepath, 'log-{os.getpid()}.txt'), mode='w')
     handler.setFormatter(formatter)
     screen_handler = logging.StreamHandler(stream=sys.stdout)
     screen_handler.setFormatter(formatter)
