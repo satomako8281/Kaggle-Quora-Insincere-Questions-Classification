@@ -6,6 +6,12 @@ import sys
 import numpy as np
 import torch
 
+
+USE_CACHED_DATASET = int(os.environ.get('USE_CACHED_DATASET', 0))
+
+
+
+
 DEBUG :bool = False
 
 SEED = 1029
@@ -50,6 +56,7 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
 
 USE_CACHED_DATASET = True
+DUMP_DATASET = True
 DEBUG_N = 100
 TEST_SIZE = 100
 TEST_CHUNK = 100

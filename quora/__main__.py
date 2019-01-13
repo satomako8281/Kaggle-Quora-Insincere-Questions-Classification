@@ -24,10 +24,6 @@ def define_models_1():
     return prepare_vectorizer_1()
 
 if __name__ == '__main__':
-    arg_map = {
-        1: define_models_1
-    }
-
     main(
         sys.argv[1],
         {

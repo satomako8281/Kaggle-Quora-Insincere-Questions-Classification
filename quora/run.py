@@ -7,36 +7,35 @@ from quora.config import BATCH_SIZE, N_EPOCHS
 from quora.misc import sigmoid
 
 
-def train(
+def fit_validate_one_folds(
+    model,
     x_train, y_train, kfold_X_features,
     x_valid, y_valid, kfold_X_valid_features,
-    model, loss_fn, optimizer, scheduler=None
 ):
     train_loader = make_loader(x_train, y=y_train)
     valid_loader = make_loader(x_valid, y=y_valid, shuffle=False)
     for epoch in range(N_EPOCHS):
         start_time = time.time()
-
-        model.train()
+        model['model'].train()
         avg_loss = 0.
         for i, (x_batch, y_batch) in enumerate(train_loader):
             f = kfold_X_features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
-            y_pred = model([x_batch, f])
-            if scheduler:
-                scheduler.batch_step()
-            loss = loss_fn(y_pred, y_batch)
-            optimizer.zero_grad()
+            y_pred = model['model']([x_batch, f])
+            if model['scheduler']:
+                model['scheduler'].batch_step()
+            loss = model['loss_fn'](y_pred, y_batch)
+            model['optimizer'].zero_grad()
             loss.backward()
-            optimizer.step()
+            model['optimizer'].step()
             avg_loss += loss.item() / len(train_loader)
 
-        model.eval()
+        model['model'].eval()
         valid_preds_fold = np.zeros(len(x_valid))
         avg_val_loss = 0.
         for i, (x_batch, y_batch) in enumerate(valid_loader):
             f = kfold_X_valid_features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
-            y_pred = model([x_batch, f]).detach()
-            avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
+            y_pred = model['model']([x_batch, f]).detach()
+            avg_val_loss += model['loss_fn'](y_pred, y_batch).item() / len(valid_loader)
             valid_preds_fold[i * BATCH_SIZE:(i + 1) * BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
         elapsed_time = time.time() - start_time
@@ -46,7 +45,7 @@ def train(
             )
         )
 
-    return valid_preds_fold, avg_loss, avg_val_loss
+    return model['model'], y_valid, valid_preds_fold, avg_loss, avg_val_loss
 
 
 def pred(model, x_test, test_features):
