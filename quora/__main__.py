@@ -37,12 +37,15 @@ def fit_transform_vectorizer(vectorizer):
     # y_va = df_va['target'].values
     X_tr = vectorizer.fit_transform(df_tr, y_tr)
     # X_va = vectorizer.transform(df_va)
-    return X_tr, y_tr
+    tokenizer = Tokenizer(num_words=MAX_FEATURES)
+    tokenizer.fit_on_texts(list(df_tr['question_text']))
+
+    return X_tr, y_tr, tokenizer.word_index
 
 
 def fit_validate(vectorizer):
     # X_tr, y_tr, X_va, y_va, fitted_vectorizer = fit_transform_vectorizer(vectorizer)
-    x_train, y_train = fit_transform_vectorizer(vectorizer)
+    x_train, y_train, word_index = fit_transform_vectorizer(vectorizer)
 
     return x_train[:, :x_train.shape[1]-2], y_train, x_train[:, x_train.shape[1]-2:]
 
@@ -60,9 +63,9 @@ if __name__ == '__main__':
     set_dataset_file(DEBUG)
     set_pilot_study_config(PILOT_STUDY)
 
-    x_train, y_train, features = fit_validate(vectorizer)
+    x_train, y_train, features, word_index = fit_validate(vectorizer)
     # x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
-    # embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
+    embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
 
     train_preds = np.zeros((len(x_train)))
     # test_preds = np.zeros((len(x_test)))
