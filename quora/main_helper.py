@@ -7,7 +7,7 @@ import torch
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
-from quora.embeddings import make_embedding_matrix
+from quora.embeddings import make_./input
 from quora.eval import bestThresshold
 from quora.layers import NeuralNet
 from quora.learning_rate import CyclicLR
@@ -74,7 +74,7 @@ def main(name, action, arg_map):
         message = 'test'
         send_line_notification(message)
 
-    # embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
+    # ./input = make_./input(word_index, USE_LOAD_CASHED_EMBEDDINGS)
     #
     # train_preds = np.zeros((len(x_train)))
     # test_preds = np.zeros((len(x_test)))
@@ -84,7 +84,7 @@ def main(name, action, arg_map):
     # for i, (train_idx, valid_idx) in enumerate(splits):
     #     print(f'Fold {i + 1}')
     #
-    #     model = NeuralNet(embedding_matrix).cuda()
+    #     model = NeuralNet(./input).cuda()
     #     loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
         optimizer = torch.optim.Adam(
             filter(lambda p: p.requires_grad, model.parameters()), lr=MAX_LR

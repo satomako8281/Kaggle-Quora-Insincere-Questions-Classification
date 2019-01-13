@@ -61,8 +61,8 @@ def load_and_prec(DEBUG, use_load_files=False):
 
         return x_train, x_test, y_train, features, test_features, word_index
 
-    train_df = pd.read_csv("../input/train.csv")
-    test_df = pd.read_csv("../input/test.csv")
+    train_df = pd.read_csv("./input/train.csv")
+    test_df = pd.read_csv("./input/test.csv")
     if DEBUG:
         train_df = pd.concat([
             train_df[train_df['target'] == 0].head(100), train_df[train_df['target'] == 1].head(100)

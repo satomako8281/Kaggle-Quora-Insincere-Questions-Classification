@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     if not DEBUG:
         delta = bestThresshold(y_train, train_preds)
-        df_test = pd.read_csv("../input/test.csv")
+        df_test = pd.read_csv("./input/test.csv")
         submission = df_test[['qid']].copy()
         submission['prediction'] = (test_preds > delta).astype(int)
         submission.to_csv('submission.csv', index=False)
