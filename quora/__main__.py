@@ -75,8 +75,7 @@ if __name__ == '__main__':
     for i, (train_idx, valid_idx) in enumerate(splits):
         print(f'Fold {i + 1}')
 
-        model = NeuralNet().cuda()
-        # model = NeuralNet(embedding_matrix).cuda()
+        model = NeuralNet(embedding_matrix).cuda()
         loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
         optimizer = torch.optim.Adam(
             filter(lambda p: p.requires_grad, model.parameters()), lr=MAX_LR
