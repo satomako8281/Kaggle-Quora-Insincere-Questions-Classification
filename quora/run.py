@@ -3,8 +3,8 @@ import time
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from config import BATCH_SIZE, N_EPOCHS
-from misc import sigmoid
+from quora.config import BATCH_SIZE, N_EPOCHS
+from quora.misc import sigmoid
 
 
 def train(

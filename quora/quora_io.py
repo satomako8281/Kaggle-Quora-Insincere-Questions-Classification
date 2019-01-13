@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from config import DEBUG, DEBUG_N, TEST_SIZE, TEST_CHUNK, VALIDATION_SIZE
+from quora.config import DEBUG, DEBUG_N, TEST_SIZE, TEST_CHUNK, VALIDATION_SIZE
 
 
 def load_train(path='../input/train.csv'):

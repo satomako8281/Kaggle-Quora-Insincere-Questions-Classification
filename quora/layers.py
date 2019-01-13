@@ -3,7 +3,7 @@ import torch as t
 import torch.nn as nn
 import torch.nn.functional as F
 
-from config import (
+from quora.config import (
     EMBED_SIZE,MAX_FEATURES, MAXLEN, BATCH_SIZE,
     HIDDEN_SIZE, GRU_LEN, USE_PRETRAINED_EMBEDDINGS,
     ROUTINGS, NUM_CAPSULE, DIM_CAPSULE, T_EPSILON

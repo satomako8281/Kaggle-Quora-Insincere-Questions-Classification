@@ -4,18 +4,18 @@ import pickle
 import numpy as np
 import pandas as pd
 import torch
-from config import (
+from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
-from embeddings import make_embedding_matrix
-from eval import bestThresshold
-from layers import NeuralNet
-from learning_rate import CyclicLR
-from run import train, pred
+from quora.embeddings import make_embedding_matrix
+from quora.eval import bestThresshold
+from quora.layers import NeuralNet
+from quora.learning_rate import CyclicLR
+from quora.run import train, pred
 from sklearn.model_selection import StratifiedKFold
 from tqdm.auto import tqdm
 
-from quora_io import load_train_validation
+from quora.quora_io import load_train_validation
 
 tqdm.pandas(desc='Progress')
 

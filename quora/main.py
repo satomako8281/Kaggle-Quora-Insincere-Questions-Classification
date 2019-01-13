@@ -1,32 +1,63 @@
-from main_helper import main
-from datasets import prepare_vecorizer_1
-from skorch import NeuralNetClassifier
-from skorch.helper import predefined_split
+import numpy as np
+import pandas as pd
 import torch
+from quora.config import (
+    STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
+)
+from quora.dataset import load_and_prec
+from quora.embeddings import make_embedding_matrix
+from quora.eval import bestThresshold
+from quora.layers import NeuralNet
+from quora.learning_rate import CyclicLR
+from quora.run import train, pred
+from sklearn.model_selection import StratifiedKFold
+from tqdm.auto import tqdm
 
-from layers import NeuralNet
+tqdm.pandas(desc='Progress')
 
-def define_models_1(embeddings):
-    models = [
-        NeuralNetClassifier(
-            NeuralNet(embeddings),  #TODO: wrapperを作る
-            criterion=torch.nn.BCEWithLogitsLoss,
-            optimizer=torch.optim.Adam,
-            optimizer__lr=0.001,
-            max_epochs=5,
-            batch_size=512,
-            iterator_train=
-        )
-    ]
+USE_LOAD_CASED_DATASET = True
+USE_LOAD_CASHED_EMBEDDINGS = True
+DEBUG = True
+PILOT_STUDY = True
 
-    return models, prepare_vecorizer_1()
+seed_everything(SEED)
+set_dataset_file(DEBUG)
+set_pilot_study_config(PILOT_STUDY)
 
-if __name__ == '__main__':
-    name = 'pytorch'
-    action = '1'
-    arg_map = {
-        1: define_models_1
-    }
+x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
+embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
 
-    main(name, action, arg_map)
+train_preds = np.zeros((len(x_train)))
+test_preds = np.zeros((len(x_test)))
+avg_losses_f = []
+avg_val_losses_f = []
+splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(x_train, y_train))
+for i, (train_idx, valid_idx) in enumerate(splits):
+    print(f'Fold {i + 1}')
 
+    model = NeuralNet(embedding_matrix).cuda()
+    loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
+    optimizer = torch.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()), lr=MAX_LR
+    )
+    scheduler = CyclicLR(optimizer, base_lr=BASE_LR, max_lr=MAX_LR, step_size=STEP_SIZE, mode=MODE, gamma=GAMMA)
+    valid_preds_fold, avg_loss, avg_val_loss = train(
+        x_train[train_idx.astype(int)], y_train[train_idx.astype(int), np.newaxis], features[train_idx.astype(int)],
+        x_train[valid_idx.astype(int)], y_train[valid_idx.astype(int), np.newaxis], features[valid_idx.astype(int)],
+        model, loss_fn, optimizer, scheduler=scheduler
+    )
+    train_preds[valid_idx] = valid_preds_fold
+    avg_losses_f.append(avg_loss)
+    avg_val_losses_f.append(avg_val_loss)
+
+    test_preds_fold = pred(model, x_test, test_features)
+    test_preds += test_preds_fold / N_SPLITS
+
+print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
+
+if not DEBUG:
+    delta = bestThresshold(y_train, train_preds)
+    df_test = pd.read_csv("../input/test.csv")
+    submission = df_test[['qid']].copy()
+    submission['prediction'] = (test_preds > delta).astype(int)
+    submission.to_csv('submission.csv', index=False)

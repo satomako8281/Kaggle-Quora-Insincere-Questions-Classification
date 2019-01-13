@@ -2,7 +2,7 @@ import gc
 
 import numpy as np
 
-from config import MAX_FEATURES
+from quora.config import MAX_FEATURES
 
 
 def make_embedding_matrix(word_index, use_load_files):
