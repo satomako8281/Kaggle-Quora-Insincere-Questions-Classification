@@ -1,3 +1,17 @@
+import re
+
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+from quora.config import (
+    MAX_FEATURES, MAXLEN, SEED,
+    X_TRAIN_ARRAY, X_TEST_ARRAY, Y_TRAIN_ARRAY, FEATURES_ARRAY, TEST_FEATURES_ARRAY, WORD_INDEX_ARRAY
+)
+
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline, make_union
 
