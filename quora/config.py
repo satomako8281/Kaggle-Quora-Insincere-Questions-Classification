@@ -1,5 +1,7 @@
+import logging
 import os
 import random
+import sys
 
 import numpy as np
 import torch
@@ -72,4 +74,25 @@ def set_pilot_study_config(PILOT_STUDY):
     global N_EPOCHS
     N_SPLITS = 2 if PILOT_STUDY else 5
     N_EPOCHS = 1 if PILOT_STUDY else 5
+
+USE_CACHED_DATASET = True
+DEBUG_N = 100
+TEST_SIZE = 100
+TEST_CHUNK = 100
+VALIDATION_SIZE = 100
+
+def setup_custom_logger(name):
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    handler = logging.FileHandler(f'../output/log/log-{os.getpid()}.txt', mode='w')
+    handler.setFormatter(formatter)
+    screen_handler = logging.StreamHandler(stream=sys.stdout)
+    screen_handler.setFormatter(formatter)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    logger.addHandler(screen_handler)
+    return logger
+
+logger = setup_custom_logger('quora')
 

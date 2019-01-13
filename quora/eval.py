@@ -11,5 +11,5 @@ def bestThresshold(y_train, train_preds):
         if tmp[1] > tmp[2]:
             delta = tmp[0]
             tmp[2] = tmp[1]
-    print('best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, tmp[2]))
-    return delta
+    return delta, tmp[2]
+
