@@ -6,7 +6,7 @@ from sklearn.model_selection import StratifiedKFold
 import torch
 from tqdm import tqdm
 
-from quora.datasets import load_and_prec, prepare_vectorizer_1
+from quora.datasets import , prepare_vectorizer_1
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
@@ -16,6 +16,7 @@ from quora.layers import NeuralNet
 from quora.learning_rate import CyclicLR
 from quora.run import train, pred
 from quora.misc import send_line_notification
+from quora.quora_io import load_test_iter
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -29,6 +30,7 @@ tqdm.pandas(desc='Progress')
 USE_LOAD_CASED_DATASET = False
 USE_LOAD_CASHED_EMBEDDINGS = False
 PILOT_STUDY = False
+HANDLE_TEST = False
 
 def fit_transform_vectorizer(vectorizer):
     df_tr = pd.read_csv("./input/train.csv")
@@ -47,7 +49,7 @@ def fit_validate(vectorizer):
     # X_tr, y_tr, X_va, y_va, fitted_vectorizer = fit_transform_vectorizer(vectorizer)
     x_train, y_train, word_index = fit_transform_vectorizer(vectorizer)
 
-    return x_train[:, :x_train.shape[1]-2], y_train, x_train[:, x_train.shape[1]-2:]
+    return x_train[:, :x_train.shape[1]-2], y_train, x_train[:, x_train.shape[1]-2:], word_index
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -64,13 +66,12 @@ if __name__ == '__main__':
     set_pilot_study_config(PILOT_STUDY)
 
     x_train, y_train, features, word_index = fit_validate(vectorizer)
-    # x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
     embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
 
     train_preds = np.zeros((len(x_train)))
-    # test_preds = np.zeros((len(x_test)))
     avg_losses_f = []
     avg_val_losses_f = []
+    models = []
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(x_train, y_train))
     for i, (train_idx, valid_idx) in enumerate(splits):
         print(f'Fold {i + 1}')
@@ -89,17 +90,26 @@ if __name__ == '__main__':
         train_preds[valid_idx] = valid_preds_fold
         avg_losses_f.append(avg_loss)
         avg_val_losses_f.append(avg_val_loss)
+        models.append(model)
 
-        # test_preds_fold = pred(model, x_test, test_features)
-        # test_preds += test_preds_fold / N_SPLITS
 
     print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
+    delta, f1_score = bestThresshold(y_train, train_preds)
+    print('best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
     message = 'test'
     send_line_notification(message)
 
-    delta = bestThresshold(y_train, train_preds)
-    # if not DEBUG:
-    #     df_test = pd.read_csv("./input/test.csv")
-    #     submission = df_test[['qid']].copy()
-    #     submission['prediction'] = (test_preds > delta).astype(int)
-    #     submission.to_csv('submission.csv', index=False)
+    if HANDLE_TEST:
+        df_test = pd.read_csv("./input/test.csv")
+        x_test = vectorizer.fit_transform(df_test)
+        x_test_ = x_test[:, :x_test.shape[1]-2]
+        test_features = x_test[:, x_test.shape[1]-2:]
+        test_preds = np.zeros((len(x_test)))
+        for model in models:
+            test_preds_fold = pred(model, x_test_, test_features)
+            test_preds += test_preds_fold / N_SPLITS
+
+        submission = df_test[['qid']].copy()
+        submission['prediction'] = (test_preds > delta).astype(int)
+        submission.to_csv('submission.csv', index=False)
+
