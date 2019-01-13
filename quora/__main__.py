@@ -1,3 +1,5 @@
+import argparse
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
@@ -19,10 +21,19 @@ tqdm.pandas(desc='Progress')
 
 USE_LOAD_CASED_DATASET = False
 USE_LOAD_CASHED_EMBEDDINGS = False
-DEBUG = True
 PILOT_STUDY = False
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--DEBUG')
+    args = parser.parse_args()
+
+    global DEBUG
+    DEBUG = True if args.DEBUG else False
+
+    print(args)
+    print(args.DEBUG)
+
     seed_everything(SEED)
     set_dataset_file(DEBUG)
     set_pilot_study_config(PILOT_STUDY)
