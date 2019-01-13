@@ -70,8 +70,8 @@ def load_and_prec(DEBUG, use_load_files=False):
             train_df[train_df['target'] == 0].head(100), train_df[train_df['target'] == 1].head(100)
         ]).sample(frac=1).reset_index(drop=True)
         test_df = test_df.head(100)
-        train_df.to_pickle('train_df_for_debug.pkl')
-        test_df.to_pickle('test_df_for_debug.pkl')
+        train_df.to_pickle('./input/train_df_for_debug.pkl')
+        test_df.to_pickle('./input/test_df_for_debug.pkl')
 
     train_df["question_text"] = train_df["question_text"].apply(lambda x: x.lower())
     tqdm.pandas(desc='Progress clean_text')
