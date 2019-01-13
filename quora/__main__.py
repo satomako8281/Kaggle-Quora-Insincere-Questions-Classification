@@ -6,7 +6,7 @@ from sklearn.model_selection import StratifiedKFold
 import torch
 from tqdm import tqdm
 
-from quora.datasets import , prepare_vectorizer_1
+from quora.datasets import prepare_vectorizer_1
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
