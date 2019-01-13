@@ -1,3 +1,4 @@
+import socket
 import json
 import logging
 import requests
@@ -23,7 +24,7 @@ def write_spreadsheet(*args):
 def send_line_notification(message):
     line_token = 'LLT1Huejwe1C5IPxcLoIi2mZWelUc0QpGEJjpqrXucH'  # 終わったら無効化する
     endpoint = 'https://notify-api.line.me/api/notify'
-    message = "\n{}".format(message)
+    message = "\n{}\n{}".format(socket.gethostname(), message)
     payload = {'message': message}
     headers = {'Authorization': 'Bearer {}'.format(line_token)}
     requests.post(endpoint, data=payload, headers=headers)

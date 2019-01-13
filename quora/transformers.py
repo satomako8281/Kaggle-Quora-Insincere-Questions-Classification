@@ -17,8 +17,7 @@ from sklearn.linear_model import SGDRegressor
 from tqdm import tqdm
 
 from quora.config import (
-    MAX_FEATURES, MAXLEN, SEED,
-    X_TRAIN_ARRAY, X_TEST_ARRAY, Y_TRAIN_ARRAY, FEATURES_ARRAY, TEST_FEATURES_ARRAY, WORD_INDEX_ARRAY, logger
+    MAX_FEATURES, MAXLEN, SEED, logger
 )
 
 

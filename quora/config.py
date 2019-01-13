@@ -10,6 +10,8 @@ DEBUG :bool = False
 
 SEED = 1029
 
+DEBUG_N = int(os.environ.get('DEBUG_N', 0))
+
 # use "train" or "pred"
 EMBED_SIZE = 300
 MAX_FEATURES = 120000 # how many unique words to use (i.e num rows in embedding vector)
@@ -32,14 +34,6 @@ LR = 0.001
 T_EPSILON = 1e-7
 NUM_CLASSES = 30
 
-# use "dataset"
-X_TRAIN_ARRAY = "x_train_for_debug.npy" if DEBUG else "x_train.npy"
-X_TEST_ARRAY = "x_test_for_debug.npy" if DEBUG else "x_test.npy"
-Y_TRAIN_ARRAY = "y_train_for_debug.npy" if DEBUG else "y_train.npy"
-FEATURES_ARRAY = "features_for_debug.npy" if DEBUG else "features.npy"
-TEST_FEATURES_ARRAY = "test_features_for_debug.npy" if DEBUG else "test_features.npy"
-WORD_INDEX_ARRAY = "word_index_for_debug.npy" if DEBUG else "word_index.npy"
-
 # use "CLR"
 STEP_SIZE = 300
 BASE_LR = 0.001
@@ -54,26 +48,6 @@ def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
-
-def set_dataset_file(DEBUG):
-    global X_TRAIN_ARRAY
-    global X_TEST_ARRAY
-    global Y_TRAIN_ARRAY
-    global FEATURES_ARRAY
-    global TEST_FEATURES_ARRAY
-    global WORD_INDEX_ARRAY
-    X_TRAIN_ARRAY = "x_train_for_debug.npy" if DEBUG else "x_train.npy"
-    X_TEST_ARRAY = "x_test_for_debug.npy" if DEBUG else "x_test.npy"
-    Y_TRAIN_ARRAY = "y_train_for_debug.npy" if DEBUG else "y_train.npy"
-    FEATURES_ARRAY = "features_for_debug.npy" if DEBUG else "features.npy"
-    TEST_FEATURES_ARRAY = "test_features_for_debug.npy" if DEBUG else "test_features.npy"
-    WORD_INDEX_ARRAY = "word_index_for_debug.npy" if DEBUG else "word_index.npy"
-
-def set_pilot_study_config(PILOT_STUDY):
-    global N_SPLITS
-    global N_EPOCHS
-    N_SPLITS = 2 if PILOT_STUDY else 5
-    N_EPOCHS = 1 if PILOT_STUDY else 5
 
 USE_CACHED_DATASET = True
 DEBUG_N = 100
