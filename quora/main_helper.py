@@ -50,14 +50,14 @@ def fit_validate(models, vectorizer, name=None,
             X_tr, y_tr = X_tr[:DEBUG_N], y_tr[:DEBUG_N]
     else:
         X_tr, y_tr, X_va, y_va, fitted_vectorizer = fit_transform_vectorizer(vectorizer)
-    if DUMP_DATASET:
-        assert name is not None
-        with open(cached_path, 'wb') as f:
-            pickle.dump((X_tr, y_tr, X_va, y_va, fitted_vectorizer), f)
-
-    fitted_models = fit_models(X_tr, y_tr, models)
-    y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
-    return fitted_vectorizer, fitted_models, y_va, y_va_preds
+    # if DUMP_DATASET:
+    #     assert name is not None
+    #     with open(cached_path, 'wb') as f:
+    #         pickle.dump((X_tr, y_tr, X_va, y_va, fitted_vectorizer), f)
+    #
+    # fitted_models = fit_models(X_tr, y_tr, models)
+    # y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
+    # return fitted_vectorizer, fitted_models, y_va, y_va_preds
 
 def main(name, action, arg_map):
     prefix = lambda r: "{}_{}s".format(name, r)

@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 import torch
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
-from quora.datasets import load_and_prec
+from quora.datasets import load_and_prec, prepare_vectorizer_1
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
@@ -17,39 +17,63 @@ from quora.learning_rate import CyclicLR
 from quora.run import train, pred
 from quora.misc import send_line_notification
 
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+from quora.config import (
+    MAX_FEATURES, MAXLEN, SEED,
+    X_TRAIN_ARRAY, X_TEST_ARRAY, Y_TRAIN_ARRAY, FEATURES_ARRAY, TEST_FEATURES_ARRAY, WORD_INDEX_ARRAY
+)
+
 tqdm.pandas(desc='Progress')
 
 USE_LOAD_CASED_DATASET = False
 USE_LOAD_CASHED_EMBEDDINGS = False
 PILOT_STUDY = False
 
+def fit_transform_vectorizer(vectorizer):
+    df_tr = pd.read_csv("./input/train.csv")
+    # df_tr, df_va = load_train_validation()
+    y_tr = df_tr['target'].values
+    # y_va = df_va['target'].values
+    X_tr = vectorizer.fit_transform(df_tr, y_tr)
+    # X_va = vectorizer.transform(df_va)
+    return X_tr, y_tr
+
+
+def fit_validate(vectorizer):
+    # X_tr, y_tr, X_va, y_va, fitted_vectorizer = fit_transform_vectorizer(vectorizer)
+    x_train, y_train = fit_transform_vectorizer(vectorizer)
+
+    return x_train[:, :x_train.shape[1]-2], y_train, x_train[:, x_train.shape[1]-2:]
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--DEBUG')
     args = parser.parse_args()
 
+    vectorizer = prepare_vectorizer_1()
+
     global DEBUG
     DEBUG = True if args.DEBUG else False
-
-    print(args)
-    print(args.DEBUG)
 
     seed_everything(SEED)
     set_dataset_file(DEBUG)
     set_pilot_study_config(PILOT_STUDY)
 
-    x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
-    embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
+    x_train, y_train, features = fit_validate(vectorizer)
+    # x_train, x_test, y_train, features, test_features, word_index = load_and_prec(DEBUG, USE_LOAD_CASED_DATASET)
+    # embedding_matrix = make_embedding_matrix(word_index, USE_LOAD_CASHED_EMBEDDINGS)
 
     train_preds = np.zeros((len(x_train)))
-    test_preds = np.zeros((len(x_test)))
+    # test_preds = np.zeros((len(x_test)))
     avg_losses_f = []
     avg_val_losses_f = []
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(x_train, y_train))
     for i, (train_idx, valid_idx) in enumerate(splits):
         print(f'Fold {i + 1}')
 
-        model = NeuralNet(embedding_matrix).cuda()
+        model = NeuralNet().cuda()
+        # model = NeuralNet(embedding_matrix).cuda()
         loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
         optimizer = torch.optim.Adam(
             filter(lambda p: p.requires_grad, model.parameters()), lr=MAX_LR
@@ -64,16 +88,16 @@ if __name__ == '__main__':
         avg_losses_f.append(avg_loss)
         avg_val_losses_f.append(avg_val_loss)
 
-        test_preds_fold = pred(model, x_test, test_features)
-        test_preds += test_preds_fold / N_SPLITS
+        # test_preds_fold = pred(model, x_test, test_features)
+        # test_preds += test_preds_fold / N_SPLITS
 
     print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
     message = 'test'
     send_line_notification(message)
 
-    if not DEBUG:
-        delta = bestThresshold(y_train, train_preds)
-        df_test = pd.read_csv("./input/test.csv")
-        submission = df_test[['qid']].copy()
-        submission['prediction'] = (test_preds > delta).astype(int)
-        submission.to_csv('submission.csv', index=False)
+    delta = bestThresshold(y_train, train_preds)
+    # if not DEBUG:
+    #     df_test = pd.read_csv("./input/test.csv")
+    #     submission = df_test[['qid']].copy()
+    #     submission['prediction'] = (test_preds > delta).astype(int)
+    #     submission.to_csv('submission.csv', index=False)

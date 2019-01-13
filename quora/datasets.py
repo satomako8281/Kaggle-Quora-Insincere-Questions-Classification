@@ -1,5 +1,6 @@
 import os
 import re
+from tqdm import tqdm
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -21,7 +22,7 @@ from quora.transformers import (
 )
 
 
-def prepare_vecorizer_1():
+def prepare_vectorizer_1():
     vectorizer = make_pipeline(
         LowerCase(),
         TextCleaner(),
@@ -73,7 +74,9 @@ def load_and_prec(DEBUG, use_load_files=False):
         test_df.to_pickle('test_df_for_debug.pkl')
 
     train_df["question_text"] = train_df["question_text"].apply(lambda x: x.lower())
+    tqdm.pandas(desc='Progress clean_text')
     train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: clean_text(x))
+    tqdm.pandas(desc='Progress clean_numbers')
     train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: clean_numbers(x))
     x_train = train_df["question_text"].fillna("_##_").values
     y_train = train_df['target'].values

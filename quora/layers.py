@@ -157,14 +157,15 @@ class Attention(nn.Module):
 
 
 class NeuralNet(nn.Module):
-    def __init__(self, embedding_matrix):
+    def __init__(self, embedding_matrix=None):
         super(NeuralNet, self).__init__()
 
         fc_layer = 16
         fc_layer1 = 16
 
         self.embedding = nn.Embedding(MAX_FEATURES, EMBED_SIZE)
-        self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
+        if embedding_matrix is not None:
+            self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
         self.embedding.weight.requires_grad = False
 
         self.embedding_dropout = nn.Dropout2d(0.1)
