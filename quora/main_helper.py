@@ -72,13 +72,13 @@ def fit_validate(vectorizer, name=None, fit_parallel='thread', predict_parallel=
     for i, (train_idx, valid_idx) in enumerate(splits):
         print(f'Fold {i + 1}')
         model = make_models(embedding_matrix)
-        fitted_models, y_va, y_va_preds, avg_loss, avg_val_loss = fit_validate_one_folds(
+        fitted_model, y_va, y_va_preds, avg_loss, avg_val_loss = fit_validate_one_folds(
             model,
             x_train[train_idx.astype(int)], y_train[train_idx.astype(int), np.newaxis], features[train_idx.astype(int)],
             x_train[valid_idx.astype(int)], y_train[valid_idx.astype(int), np.newaxis], features[valid_idx.astype(int)],
         )
 
-        fitted_models.append(model)
+        fitted_models.append(fitted_model)
         train_preds[valid_idx] = y_va_preds
         avg_losses_f.append(avg_loss)
         avg_val_losses_f.append(avg_val_loss)
