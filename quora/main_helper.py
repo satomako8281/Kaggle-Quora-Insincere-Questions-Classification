@@ -126,7 +126,7 @@ def make_models(embedding_matrix):
 
     return {
         'model': model,
-        'loss_fn': torch.nn.BCEWithLogitsLoss(reduction='average'),
+        'loss_fn': torch.nn.BCEWithLogitsLoss(reduction='mean'),
         'optimizer': optimizer,
         'scheduler': CyclicLR(optimizer, base_lr=BASE_LR, max_lr=MAX_LR, step_size=STEP_SIZE, mode=MODE, gamma=GAMMA)
     }
