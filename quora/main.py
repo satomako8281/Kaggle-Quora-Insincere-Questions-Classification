@@ -4,7 +4,7 @@ import torch
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
-from quora.dataset import load_and_prec
+from quora.datasets import load_and_prec
 from quora.embeddings import make_embedding_matrix
 from quora.eval import bestThresshold
 from quora.layers import NeuralNet
