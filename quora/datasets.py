@@ -1,3 +1,4 @@
+import os
 import re
 
 from keras.preprocessing.text import Tokenizer
@@ -10,7 +11,6 @@ from quora.config import (
     MAX_FEATURES, MAXLEN, SEED,
     X_TRAIN_ARRAY, X_TEST_ARRAY, Y_TRAIN_ARRAY, FEATURES_ARRAY, TEST_FEATURES_ARRAY, WORD_INDEX_ARRAY
 )
-
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline, make_union
@@ -49,15 +49,16 @@ def prepare_vecorizer_1():
 
     return vectorizer
 
+
 ##########
 def load_and_prec(DEBUG, use_load_files=False):
     if use_load_files:
-        x_train = np.load(X_TRAIN_ARRAY)
-        x_test = np.load(X_TEST_ARRAY)
-        y_train = np.load(Y_TRAIN_ARRAY)
-        features = np.load(FEATURES_ARRAY)
-        test_features = np.load(TEST_FEATURES_ARRAY)
-        word_index = np.load(WORD_INDEX_ARRAY).item()
+        x_train = np.load(os.path.join('./input', X_TRAIN_ARRAY))
+        x_test = np.load(os.path.join('./input', X_TEST_ARRAY))
+        y_train = np.load(os.path.join('./input', Y_TRAIN_ARRAY))
+        features = np.load(os.path.join('./input', FEATURES_ARRAY))
+        test_features = np.load(os.path.join('./input', TEST_FEATURES_ARRAY))
+        word_index = np.load(os.path.join('./input', WORD_INDEX_ARRAY)).item()
 
         return x_train, x_test, y_train, features, test_features, word_index
 
@@ -101,23 +102,28 @@ def load_and_prec(DEBUG, use_load_files=False):
     x_train = x_train[trn_idx]
     y_train = y_train[trn_idx]
 
-    np.save(X_TRAIN_ARRAY,x_train)
-    np.save(X_TEST_ARRAY,x_test)
-    np.save(Y_TRAIN_ARRAY,y_train)
-    np.save(FEATURES_ARRAY,features)
-    np.save(TEST_FEATURES_ARRAY,test_features)
-    np.save(WORD_INDEX_ARRAY,tokenizer.word_index)
+    np.save(os.path.join('./input', X_TRAIN_ARRAY), x_train)
+    np.save(os.path.join('./input', X_TEST_ARRAY), x_test)
+    np.save(os.path.join('./input', Y_TRAIN_ARRAY), y_train)
+    np.save(os.path.join('./input', FEATURES_ARRAY), features)
+    np.save(os.path.join('./input', TEST_FEATURES_ARRAY), test_features)
+    np.save(os.path.join('./input', WORD_INDEX_ARRAY), tokenizer.word_index)
 
     return x_train, x_test, y_train, features, test_features, tokenizer.word_index
 
 
 def clean_text(x):
     puncts = [
-        ',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
-        '·', '_', '{', '}', '©', '^', '®', '`',  '<', '→', '°', '€', '™', '›',  '♥', '←', '×', '§', '″', '′', 'Â', '█', '½', 'à', '…',
-        '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶', '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥', '▓', '—', '‹', '─',
-        '▒', '：', '¼', '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲', 'è', '¸', '¾', 'Ã', '⋅', '‘', '∞',
-        '∙', '）', '↓', '、', '│', '（', '»', '，', '♪', '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹', '≤', '‡', '√',
+        ',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*',
+        '+', '\\', '•', '~', '@', '£',
+        '·', '_', '{', '}', '©', '^', '®', '`', '<', '→', '°', '€', '™', '›', '♥', '←', '×', '§', '″', '′', 'Â', '█',
+        '½', 'à', '…',
+        '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶', '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥',
+        '▓', '—', '‹', '─',
+        '▒', '：', '¼', '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲', 'è', '¸', '¾',
+        'Ã', '⋅', '‘', '∞',
+        '∙', '）', '↓', '、', '│', '（', '»', '，', '♪', '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹',
+        '≤', '‡', '√',
     ]
     x = str(x)
     for punct in puncts:
@@ -144,4 +150,3 @@ def clean_numbers(x):
     x = re.sub('[0-9]{3}', '###', x)
     x = re.sub('[0-9]{2}', '##', x)
     return x
-
