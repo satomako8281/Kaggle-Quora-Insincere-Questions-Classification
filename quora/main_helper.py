@@ -16,6 +16,7 @@ from sklearn.model_selection import StratifiedKFold
 from tqdm.auto import tqdm
 
 from quora.quora_io import load_train_validation
+from quora.misc import send_line_notification
 
 tqdm.pandas(desc='Progress')
 

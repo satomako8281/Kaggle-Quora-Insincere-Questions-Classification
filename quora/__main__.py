@@ -1,24 +1,26 @@
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold
 import torch
+from tqdm.auto import tqdm
+
+from quora.datasets import load_and_prec
 from quora.config import (
     STEP_SIZE, BASE_LR, MAX_LR, MODE, GAMMA, set_dataset_file, seed_everything, N_SPLITS, SEED, set_pilot_study_config
 )
-from quora.datasets import load_and_prec
 from quora.embeddings import make_embedding_matrix
 from quora.eval import bestThresshold
 from quora.layers import NeuralNet
 from quora.learning_rate import CyclicLR
 from quora.run import train, pred
-from sklearn.model_selection import StratifiedKFold
-from tqdm.auto import tqdm
+from quora.misc import send_line_notification
 
 tqdm.pandas(desc='Progress')
 
-USE_LOAD_CASED_DATASET = True
-USE_LOAD_CASHED_EMBEDDINGS = True
+USE_LOAD_CASED_DATASET = False
+USE_LOAD_CASHED_EMBEDDINGS = False
 DEBUG = True
-PILOT_STUDY = True
+PILOT_STUDY = False
 
 if __name__ == '__main__':
     seed_everything(SEED)
@@ -55,6 +57,8 @@ if __name__ == '__main__':
         test_preds += test_preds_fold / N_SPLITS
 
     print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
+    message = 'test'
+    send_line_notification(message)
 
     if not DEBUG:
         delta = bestThresshold(y_train, train_preds)
