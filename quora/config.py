@@ -55,7 +55,7 @@ def seed_everything(seed):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
 
-USE_CACHED_DATASET = True
+USE_CACHED_DATASET = False
 DUMP_DATASET = True
 DEBUG_N = 100
 TEST_SIZE = 100
