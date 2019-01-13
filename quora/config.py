@@ -56,7 +56,7 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
 
 USE_CACHED_DATASET = False
-DUMP_DATASET = True
+DUMP_DATASET = False
 DEBUG_N = 100
 TEST_SIZE = 100
 TEST_CHUNK = 100
