@@ -85,10 +85,14 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
     def predict(self, X, split_no=None):
         self._model.eval()
+        X_tr = X[:, :X.shape[1]-2]
+        features = X[:, X.shape[1]-2:]
+
         y_preds = np.zeros(len(X))
         loader = make_loader(X, shuffle=False)
         for i, x_batch in enumerate(loader):
-            y_pred = self._model(x_batch).detach()
+            f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+            y_pred = self._model([x_batch, f]).detach()
             y_preds[i*BATCH_SIZE : (i+1)*BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
         return y_preds
 
