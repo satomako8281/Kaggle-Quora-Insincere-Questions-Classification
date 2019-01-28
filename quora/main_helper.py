@@ -120,8 +120,8 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
     if USE_CACHED_MODELS:
         assert name is not None
-        # with open("./input/{}_all_fitted_models.pkl".format(name), 'rb') as f:
         all_fitted_models = joblib.load("./input/pytorch_1s_va_preds.pkl")
+        all_y_va_preds = joblib.load("pytorch_1s_va_preds.pkl")
     else:
         all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
         all_fitted_models = []
@@ -140,9 +140,6 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
 
             all_fitted_models.append(fitted_models)
             all_y_va_preds[va_idx] = y_va_preds
-    if DUMP_MODELS:
-        assert name is not None
-        joblib.dump(all_fitted_models, "./input/{}_all_fitted_models.pkl".format(name), compress=3)
 
     return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
 
