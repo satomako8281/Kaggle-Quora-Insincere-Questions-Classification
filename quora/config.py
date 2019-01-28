@@ -24,7 +24,7 @@ MAX_FEATURES = 120000 # how many unique words to use (i.e num rows in embedding 
 MAXLEN = 70 # max number of words in a question to use
 BATCH_SIZE = 512 # how many samples to process at once
 N_EPOCHS = 1 # how many times to iterate over all samples
-N_SPLITS = 2 # Number of K-fold Splits
+N_SPLITS = 5 # Number of K-fold Splits
 
 # use "layers"
 EMBEDDING_DIM = 300
