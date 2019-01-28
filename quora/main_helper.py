@@ -118,7 +118,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             pickle.dump((X_train, y_train, fitted_vectorizer, embedding_matrix), f)
 
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
-    all_y_va_preds = np.zeros((len(X_train)))
+    all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
     print(all_y_va_preds.shape)
     all_fitted_models = []
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
@@ -138,7 +138,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
         all_fitted_models.append(fitted_models)
-        all_y_va_preds[va_idx] = y_va_preds.flatten()
+        all_y_va_preds[va_idx] = y_va_preds
 
     return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
 
