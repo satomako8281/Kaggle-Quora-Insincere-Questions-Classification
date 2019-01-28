@@ -91,6 +91,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         features = X[:, X.shape[1]-2:]
 
         torch_x = torch.tensor(X_tr, dtype=torch.long)
+        print(torch_x.shape)
         if self._gpu:
             torch_x = torch_x.cuda()
 
