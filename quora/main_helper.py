@@ -157,7 +157,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
             np.expm1(est.predict(np.log1p(X_te))) if X_te is not None else None)
 
 
-def main(name, action, arg_map, fit_parallel='thread', predict_parallel='thread'):
+def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     prefix = lambda r: '{}_{}s'.format(name, r)
 
     if action in ('1'):
