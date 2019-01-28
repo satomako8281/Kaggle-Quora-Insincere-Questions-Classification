@@ -3,12 +3,12 @@ import os
 
 import numpy as np
 
-from quora.config import MAX_FEATURES, INPUT_PATH
+from quora.config import MAX_FEATURES, INPUT_PATH, USE_CASHED_EMBEDDINGS
 
 
-def make_embedding_matrix(word_index, use_load_files):
-    glove_embeddings = load_glove(word_index, use_load_files)
-    paragram_embeddings = load_para(word_index, use_load_files)
+def make_embedding_matrix(word_index):
+    glove_embeddings = load_glove(word_index)
+    paragram_embeddings = load_para(word_index)
     embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
 
     del glove_embeddings, paragram_embeddings
@@ -17,9 +17,9 @@ def make_embedding_matrix(word_index, use_load_files):
     return embedding_matrix
 
 
-def load_glove(word_index, use_load_files):
-    if use_load_files:
-        embedding_matrix = np.load("glove_embedding_matrix.npy")
+def load_glove(word_index):
+    if USE_CASHED_EMBEDDINGS:
+        embedding_matrix = np.load(os.path.join(INPUT_PATH, "glove_embedding_matrix.npy"))
         return embedding_matrix
 
     def get_coefs(word, *arr):
@@ -39,13 +39,13 @@ def load_glove(word_index, use_load_files):
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None: embedding_matrix[i] = embedding_vector
 
-    np.save("glove_embedding_matrix.npy", embedding_matrix)
+    np.save(os.path.join(INPUT_PATH, "glove_embedding_matrix.npy"), embedding_matrix)
     return embedding_matrix
 
 
-def load_fasttext(word_index, use_load_files):
-    if use_load_files:
-        embedding_matrix = np.load("fasttext_embedding_matrix.npy")
+def load_fasttext(word_index):
+    if USE_CASHED_EMBEDDINGS:
+        embedding_matrix = np.load(os.path.join(INPUT_PATH, "fasttext_embedding_matrix.npy"))
         return embedding_matrix
 
     def get_coefs(word, *arr):
@@ -65,13 +65,13 @@ def load_fasttext(word_index, use_load_files):
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None: embedding_matrix[i] = embedding_vector
 
-    np.save("fasttext_embedding_matrix.npy", embedding_matrix)
+    np.save(os.path.join(INPUT_PATH, "fasttext_embedding_matrix.npy"), embedding_matrix)
     return embedding_matrix
 
 
-def load_para(word_index, use_load_files):
-    if use_load_files:
-        embedding_matrix = np.load("para_embedding_matrix.npy")
+def load_para(word_index):
+    if USE_CASHED_EMBEDDINGS:
+        embedding_matrix = np.load(os.path.join(INPUT_PATH, "para_embedding_matrix.npy"))
         return embedding_matrix
 
     def get_coefs(word, *arr):
@@ -92,5 +92,6 @@ def load_para(word_index, use_load_files):
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None: embedding_matrix[i] = embedding_vector
 
-    np.save("para_embedding_matrix.npy", embedding_matrix)
+    np.save(os.path.join(INPUT_PATH, "para_embedding_matrix.npy"), embedding_matrix)
     return embedding_matrix
+

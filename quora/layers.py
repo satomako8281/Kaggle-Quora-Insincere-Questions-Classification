@@ -157,17 +157,14 @@ class Attention(nn.Module):
 
 
 class NeuralNet(nn.Module):
-    def __init__(self, embedding_matrix=None):
+    def __init__(self):
         super(NeuralNet, self).__init__()
 
         fc_layer = 16
         fc_layer1 = 16
 
         self.embedding = nn.Embedding(MAX_FEATURES, EMBED_SIZE)
-        if embedding_matrix is not None:
-            self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
         self.embedding.weight.requires_grad = False
-
         self.embedding_dropout = nn.Dropout2d(0.1)
         self.lstm = nn.LSTM(EMBED_SIZE, HIDDEN_SIZE, bidirectional=True, batch_first=True)
         self.gru = nn.GRU(HIDDEN_SIZE * 2, HIDDEN_SIZE, bidirectional=True, batch_first=True)
@@ -184,6 +181,10 @@ class NeuralNet(nn.Module):
         self.out = nn.Linear(fc_layer, 1)
         self.lincaps = nn.Linear(NUM_CAPSULE * DIM_CAPSULE, 1)
         self.caps_layer = Caps_Layer()
+
+    def set_embedding_weight(self, embedding_matrix=None):
+        if embedding_matrix is not None:
+            self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
 
     def forward(self, x):
         #         Capsule(num_capsule=10, dim_capsule=10, routings=4, share_weights=True)(x)

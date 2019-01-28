@@ -214,11 +214,3 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python,pycharm
-
-.DS_Store
-.idea/
-input/
-output/
-kernel/
-my_kernel/
-scratches/

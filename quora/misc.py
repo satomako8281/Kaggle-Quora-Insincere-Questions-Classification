@@ -40,3 +40,22 @@ def timer(name, logger=None, level=logging.DEBUG):
 
 def timestamp():
     return time.strftime('%y%m%d_%H%M%S')
+
+
+class Timer:
+    def __init__(self, message):
+        self.message = message
+
+    def __enter__(self):
+        logger.info('Starting {}'.format(self.message))
+        self.start_clock = time.clock()
+        self.start_time = time.time()
+        return self
+
+    def __exit__(self, *args):
+        self.end_clock = time.clock()
+        self.end_time = time.time()
+        self.interval_clock = self.end_clock - self.start_clock
+        self.interval_time = self.end_time - self.start_time
+        logger.info('Finished {}. Took {:.2f} seconds, CPU time {:.2f}, effectiveness {:.2f}'.format(
+            self.message, self.interval_time, self.interval_clock, self.interval_clock / self.interval_time))

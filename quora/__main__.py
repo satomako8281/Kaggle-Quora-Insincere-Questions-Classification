@@ -1,32 +1,27 @@
 import sys
 from quora.main_helper import main
 from quora.datasets import prepare_vectorizer_1
-from skorch import NeuralNetClassifier
-from skorch.helper import predefined_split
-import torch
 
 from quora.layers import NeuralNet
+from quora.config import MAX_LR
+from quora.classifier import PytorchClassifier
 
 def define_models_1():
-    # models = [
-    #     NeuralNetClassifier(
-    #         NeuralNet(embeddings),  #TODO: wrapperを作る
-    #         criterion=torch.nn.BCEWithLogitsLoss,
-    #         optimizer
-    #         optimizer__lr=0.001,
-    #         max_epochs=5,
-    #         batch_size=512,
-    #         iterator_train=
-    #     )
-    # ]
+    models = [
+        PytorchClassifier(
+            NeuralNet(), use_gpu=False
+        )
+    ]
 
     # return models, prepare_vecorizer_1()
-    return prepare_vectorizer_1()
+    return models, prepare_vectorizer_1()
 
 if __name__ == '__main__':
     main(
+        'pytorch',
         sys.argv[1],
         {
             1: define_models_1()
         }
     )
+
