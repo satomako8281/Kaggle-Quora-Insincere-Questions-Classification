@@ -160,7 +160,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
 def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     prefix = lambda r: '{}_{}s'.format(name, r)
 
-    if action in ('1'):
+    if action in ('1', '2'):
         model_round = int(action)
         send_line_notification(
             "We will start with the following conditions!! \n \
@@ -195,7 +195,7 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     elif action == "merge":
         va_preds = []
         te_preds = []
-        for model_round in ("1"):
+        for model_round in ('1', '2'):
             try:
                 va_preds.append(joblib.load("{}_va_preds.pkl".format(prefix(model_round))))
                 if HANDLE_TEST:
