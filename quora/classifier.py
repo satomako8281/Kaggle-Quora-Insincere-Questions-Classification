@@ -43,7 +43,10 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
     def _train_model(self, X, y):
         self._model.train()
-        torch_x = torch.tensor(X, dtype=torch.long)
+        X_tr = X[:, :X.shape[1]-2]
+        features = X[:, X.shape[1]-2:]
+
+        torch_x = torch.tensor(X_tr, dtype=torch.long)
         torch_y = torch.tensor(y, dtype=torch.long)
         if self._gpu:
             torch_x = torch_x.cuda()
@@ -60,9 +63,8 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
             self._model.train()
             avg_loss = 0.
             for i, (x_batch, y_batch) in enumerate(train_loader):
-                print("x_batch: ")
-                print(x_batch.shape)
-                y_pred = self._model(x_batch)
+                f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+                y_pred = self._model([x_batch, f])
                 if scheduler:
                     scheduler.batch_step()
                 loss = self.loss_fn(y_pred, y_batch)
