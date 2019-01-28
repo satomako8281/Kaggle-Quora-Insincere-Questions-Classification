@@ -61,7 +61,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
             for i, (x_batch, y_batch) in enumerate(train_loader):
                 print("x_batch: ")
                 print(x_batch.shape)
-                y_pred = self._model([x_batch[:-2], x_batch[-2:]])
+                y_pred = self._model(x_batch)
                 if scheduler:
                     scheduler.batch_step()
                 loss = self.loss_fn(y_pred, y_batch)
