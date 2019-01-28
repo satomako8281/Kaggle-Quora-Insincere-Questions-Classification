@@ -119,6 +119,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
 
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
     all_y_va_preds = np.zeros((len(X_train)))
+    print(all_y_va_preds.shape)
     all_fitted_models = []
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
     for i, (tr_idx, va_idx) in enumerate(splits):
@@ -126,7 +127,10 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
 
         print("Train with Training Dataset.")
         X_tr = X_train[tr_idx]
+        print('222')
+        print(y_train)
         y_tr = y_train[tr_idx, np.newaxis]
+        print(y_tr.shape)
         fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
         print("Predict with Validation Dataset.")
