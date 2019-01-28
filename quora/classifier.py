@@ -83,7 +83,9 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
         return self
 
+
     def predict(self, X):
+        start_time = time.time()
         self._model.eval()
         X_tr = X[:, :X.shape[1]-2]
         features = X[:, X.shape[1]-2:]
@@ -96,18 +98,15 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         loader = make_loader(torch_x, shuffle=False)
         for i, x_batch in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+            print(type(x_batch))
+            print(x_batch.shape)
+            print(type(f))
+            print(f.shape)
             y_pred = self._model([x_batch, f]).detach()
             y_preds[i*BATCH_SIZE : (i+1)*BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
+        elapsed_time = time.time() - start_time
+        print("Results for time={:.2f}s ".format(elapsed_time))
         return y_preds
-
-
-    def score(self, X, y, sample_weight=None):
-        """
-        Scores the data using the trained pytorch model. Under current implementation
-        returns negative mae.
-        """
-        y_pred = self.predict(X, y)
-        return mean_absolute_error(y, y_pred) * -1
 
 
 def make_loader(X, y=None, shuffle=True):
