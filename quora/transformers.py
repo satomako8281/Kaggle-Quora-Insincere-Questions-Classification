@@ -61,7 +61,7 @@ class TextCleaner(BaseEstimator, TransformerMixin):
     def clean_text(self, x):
         x = str(x)
         for punct in self.puncts:
-            x = x.replace(punct, f' {punct} ')
+            x = x.replace(punct, ' {} '.format(punct))
         return x
 
     def transform(self, X):
