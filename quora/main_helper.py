@@ -111,7 +111,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         if DEBUG_N:
             X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]
     else:
-        X_train, y_train, embedding_matrix, fitted_vectorizer = fit_transform_vectorizer(vectorizer)
+        X_train, y_train, fitted_vectorizer, embedding_matrix = fit_transform_vectorizer(vectorizer)
     if DUMP_DATASET:
         assert name is not None
         with open(cached_path, 'wb') as f:
@@ -128,7 +128,6 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
         X_va = X_train[va_idx]
-        y_va = y_train[va_idx]
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
         all_fitted_models.append(fitted_models)

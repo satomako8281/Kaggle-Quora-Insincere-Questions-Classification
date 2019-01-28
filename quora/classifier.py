@@ -99,9 +99,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
 
 def make_loader(X, y=None, shuffle=True):
-    x_fold = torch.tensor(X, dtype=torch.long).cuda()
     if y is not None:
-        # y_fold = torch.tensor(y, dtype=torch.float32).cuda()
         dataset = torch.utils.data.TensorDataset(X, y)
     else:
         dataset = torch.utils.data.TensorDataset(X)

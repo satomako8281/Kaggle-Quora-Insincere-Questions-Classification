@@ -14,7 +14,7 @@ TEST_SIZE = int(os.environ.get('TEST_SIZE', 1))
 VALIDATION_SIZE = float(os.environ.get('VALIDATION_SIZE', 0.05))
 DUMP_DATASET = True
 USE_CACHED_DATASET = False
-USE_CASHED_EMBEDDINGS = False
+USE_CASHED_EMBEDDINGS = True
 HANDLE_TEST = int(os.environ.get('HANDLE_TEST', 1))
 TEST_CHUNK = 350000
 
