@@ -42,6 +42,10 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
             self._model = self._model.cuda()
 
     def _train_model(self, X, y):
+        print("X.shape: ")
+        print(X.shape)
+        print("y.shape: ")
+        print(y.shape)
         torch_x = torch.tensor(X, dtype=torch.long)
         torch_y = torch.tensor(y, dtype=torch.long)
         if self._gpu:

@@ -167,15 +167,10 @@ def main(name, action, arg_map, fit_parallel='thread', predict_parallel='thread'
             models, vectorizer, name=model_round, fit_parallel=fit_parallel, predict_parallel=predict_parallel
         )
         joblib.dump(y_va_preds, "{}_va_preds.pkl".format(prefix(model_round)), compress=3)
-        try:
-            for i in range(y_va_preds.shape[1]):
-                delta, f1_score = bestThresshold(y_va, y_va_preds[:, i])
-                print('[Model {}] best threshold is {:.4f} with F1 score: {:.4f}'.format(i, delta, f1_score))
-            delta, f1_score = bestThresshold(y_va, y_va_preds.mean(axis=1))
-        except:
-            send_line_notification(
-                "bestThressholdにバグがあるので、見てあげてください"
-            )
+        for i in range(y_va_preds.shape[1]):
+            delta, f1_score = bestThresshold(y_va, y_va_preds[:, i])
+            print('[Model {}] best threshold is {:.4f} with F1 score: {:.4f}'.format(i, delta, f1_score))
+        delta, f1_score = bestThresshold(y_va, y_va_preds.mean(axis=1))
         print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
         if HANDLE_TEST:
             test_idx, y_te_preds = predict_models_test_batches(
