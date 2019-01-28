@@ -97,7 +97,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
         y_preds = np.zeros(len(X))
         loader = make_loader(torch_x, shuffle=False)
-        for i, x_batch in enumerate(loader):
+        for i, (x_batch) in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
             print(type(x_batch))
             print(x_batch.shape)
