@@ -6,6 +6,7 @@ import time
 from contextlib import contextmanager
 
 import numpy as np
+from quora.config import logger
 
 
 def sigmoid(x):
