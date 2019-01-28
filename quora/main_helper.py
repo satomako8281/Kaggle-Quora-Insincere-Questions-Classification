@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 from quora.config import (
     seed_everything, N_SPLITS, USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, SEED,DEBUG_N, INPUT_PATH, logger,
-    USE_CACHED_MODELS, DUMP_MODELS
+    USE_CACHED_MODELS
 )
 from quora.embeddings import make_embedding_matrix
 from quora.eval import bestThresshold
