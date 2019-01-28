@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import torch
 
-INPUT_PATH = '~/.kaggle/competitions/quora-insincere-questions-classification/input/'
+INPUT_PATH = './input/'
 
 USE_CACHED_DATASET = int(os.environ.get('USE_CACHED_DATASET', 0))
 
