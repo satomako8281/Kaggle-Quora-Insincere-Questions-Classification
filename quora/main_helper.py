@@ -138,7 +138,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
         all_fitted_models.append(fitted_models)
-        all_y_va_preds[va_idx] = y_va_preds
+        all_y_va_preds[va_idx] = y_va_preds.flatten()
 
     return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
 

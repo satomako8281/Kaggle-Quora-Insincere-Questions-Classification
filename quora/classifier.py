@@ -99,7 +99,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         for i, (x_batch,) in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
             y_pred = self._model([x_batch, f]).detach()
-            y_preds[i*BATCH_SIZE : (i+1)*BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
+            y_preds[i*BATCH_SIZE: (i+1)*BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
         elapsed_time = time.time() - start_time
         print("Results for time={:.2f}s ".format(elapsed_time))
         return y_preds
