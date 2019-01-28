@@ -121,8 +121,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     if USE_CACHED_MODELS:
         assert name is not None
         # with open("./input/{}_all_fitted_models.pkl".format(name), 'rb') as f:
-        with open("./input/pytorch_1s_va_preds.pkl", 'r', encoding='utf8') as f:  # 決め打ち
-            all_fitted_models = pickle.load(f)
+        all_fitted_models = joblib.load("./input/pytorch_1s_va_preds.pkl")
     else:
         all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
         all_fitted_models = []
