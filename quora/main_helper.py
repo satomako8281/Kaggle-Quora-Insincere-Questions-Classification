@@ -45,7 +45,6 @@ def predict_one(est, X):
 
 def predict_models(X, fitted_models, vectorizer=None, parallel='thread'):
     if vectorizer:
-        # TODO: parallelize this
         with Timer('Transforming data'):
             X = vectorizer.transform(X)
     predict_one_ = partial(predict_one, X=X)
@@ -120,7 +119,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
     if USE_CACHED_MODELS:
         assert name is not None
-        all_fitted_models = joblib.load("./input/pytorch_1s_va_preds.pkl")
+        all_fitted_models = joblib.load("./input/pytorch_1s_fitted_models.pkl")
         all_y_va_preds = joblib.load("pytorch_1s_va_preds.pkl")
     else:
         all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
