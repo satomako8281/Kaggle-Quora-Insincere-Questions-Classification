@@ -91,9 +91,9 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         features = X[:, X.shape[1]-2:]
 
         torch_x = torch.tensor(X_tr, dtype=torch.long)
-        print(torch_x.shape)
         if self._gpu:
             torch_x = torch_x.cuda()
+        print(torch_x.shape)
 
         y_preds = np.zeros(len(X))
         loader = make_loader(torch_x, shuffle=False)
@@ -115,7 +115,9 @@ def make_loader(X, y=None, shuffle=True):
         dataset = torch.utils.data.TensorDataset(X, y)
     else:
         dataset = torch.utils.data.TensorDataset(X)
+        print(type(dataset))
     loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=shuffle)
+    print(type(loader))
 
     return loader
 
