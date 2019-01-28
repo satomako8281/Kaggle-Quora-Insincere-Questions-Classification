@@ -8,7 +8,7 @@ import torch
 
 INPUT_PATH = os.environ.get('INPUT_PATH', './input/')
 N_CORES = 4
-DEBUG_N = 0
+DEBUG_N = 100
 DEBUG = DEBUG_N > 0
 TEST_SIZE = int(os.environ.get('TEST_SIZE', 1))
 VALIDATION_SIZE = float(os.environ.get('VALIDATION_SIZE', 0.05))
@@ -23,7 +23,7 @@ EMBED_SIZE = 300
 MAX_FEATURES = 120000 # how many unique words to use (i.e num rows in embedding vector)
 MAXLEN = 70 # max number of words in a question to use
 BATCH_SIZE = 512 # how many samples to process at once
-N_EPOCHS = 5 # how many times to iterate over all samples
+N_EPOCHS = 1 # how many times to iterate over all samples
 N_SPLITS = 5 # Number of K-fold Splits
 
 # use "layers"
