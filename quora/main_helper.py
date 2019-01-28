@@ -26,7 +26,7 @@ tqdm.pandas(desc='Progress')
 
 USE_LOAD_CASED_DATASET = False
 USE_LOAD_CASHED_EMBEDDINGS = False
-HANDLE_TEST = False
+HANDLE_TEST = True
 
 
 def fit_one(est, X, y, embedding_matrix=None):
@@ -166,21 +166,23 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
         models, vectorizer = arg_map[model_round]
 
         seed_everything(SEED)
-        vectorizer, fitted_models, y_va, y_va_preds = fit_validate(
+        vectorizer, all_fitted_models, y_va, y_va_preds = fit_validate(
             models, vectorizer, name=model_round, fit_parallel=fit_parallel, predict_parallel=predict_parallel
         )
-        joblib.dump(y_va_preds, "{}_va_preds.pkl".format(prefix(model_round)), compress=3)
+        joblib.dump(all_fitted_models, "./input/{}_fitted_models.pkl".format(prefix(model_round)), compress=3)
+        joblib.dump(y_va_preds, "./input/{}_va_preds.pkl".format(prefix(model_round)), compress=3)
         for i in range(y_va_preds.shape[1]):
             delta, f1_score = bestThresshold(y_va, y_va_preds[:, i])
             print('[Model {}] best threshold is {:.4f} with F1 score: {:.4f}'.format(i, delta, f1_score))
         delta, f1_score = bestThresshold(y_va, y_va_preds.mean(axis=1))
         print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
         if HANDLE_TEST:
-            test_idx, y_te_preds = predict_models_test_batches(
-                fitted_models, vectorizer, parallel=predict_parallel)
-            joblib.dump(test_idx, "test_idx.pkl", compress=3)
-            joblib.dump(y_te_preds, "{}_te_preds.pkl".format(prefix(model_round)), compress=3)
-        joblib.dump(y_va, "y_va.pkl", compress=3)
+            for idx, fitted_models in enumerate(all_fitted_models):
+                test_idx, y_te_preds = predict_models_test_batches(
+                    fitted_models, vectorizer, parallel=predict_parallel)
+                joblib.dump(y_te_preds, "./input/{}_te_preds_{}.pkl".format(prefix(model_round), idx), compress=3)
+            joblib.dump(test_idx, "./input/test_idx.pkl", compress=3)
+        joblib.dump(y_va, "./input/y_va.pkl", compress=3)
 
         send_line_notification(
             "Training is Done!!"
