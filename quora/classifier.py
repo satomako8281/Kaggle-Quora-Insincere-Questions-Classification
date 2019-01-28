@@ -88,8 +88,12 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         X_tr = X[:, :X.shape[1]-2]
         features = X[:, X.shape[1]-2:]
 
+        torch_x = torch.tensor(X_tr, dtype=torch.long)
+        if self._gpu:
+            torch_x = torch_x.cuda()
+
         y_preds = np.zeros(len(X))
-        loader = make_loader(X_tr, shuffle=False)
+        loader = make_loader(torch_x, shuffle=False)
         for i, x_batch in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
             y_pred = self._model([x_batch, f]).detach()
