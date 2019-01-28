@@ -10,7 +10,7 @@ INPUT_PATH = '~/.kaggle/competitions/quora-insincere-questions-classification/in
 
 USE_CACHED_DATASET = int(os.environ.get('USE_CACHED_DATASET', 0))
 
-DEBUG: bool = False
+DEBUG = False
 
 SEED = 1029
 
