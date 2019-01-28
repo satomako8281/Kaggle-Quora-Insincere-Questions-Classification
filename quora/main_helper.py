@@ -107,7 +107,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     if USE_CACHED_DATASET:
         assert name is not None
         with open(cached_path, 'rb') as f:
-            X_train, y_train, embedding_matrix = pickle.load(f)
+            X_train, y_train, fitted_vectorizer, embedding_matrix = pickle.load(f)
         if DEBUG_N:
             X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]
     else:
@@ -115,7 +115,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     if DUMP_DATASET:
         assert name is not None
         with open(cached_path, 'wb') as f:
-            pickle.dump((X_train, y_train, embedding_matrix), f)
+            pickle.dump((X_train, y_train, fitted_vectorizer, embedding_matrix), f)
 
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
     all_y_va_preds = np.zeros((len(X_train)))
