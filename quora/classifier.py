@@ -93,17 +93,12 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         torch_x = torch.tensor(X_tr, dtype=torch.long)
         if self._gpu:
             torch_x = torch_x.cuda()
-        print(torch_x.shape)
 
         y_preds = np.zeros(len(X))
         loader = make_loader(torch_x, shuffle=False)
         for i, (x_batch,) in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
-            print(type(x_batch))
-            print(x_batch[0].shape)
-            print(type(f))
-            print(f.shape)
-            y_pred = self._model([x_batch[0], f]).detach()
+            y_pred = self._model([x_batch, f]).detach()
             y_preds[i*BATCH_SIZE : (i+1)*BATCH_SIZE] = sigmoid(y_pred.cpu().numpy())[:, 0]
         elapsed_time = time.time() - start_time
         print("Results for time={:.2f}s ".format(elapsed_time))
@@ -117,7 +112,6 @@ def make_loader(X, y=None, shuffle=True):
         dataset = torch.utils.data.TensorDataset(X)
         print(type(dataset))
     loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=shuffle)
-    print(type(loader))
 
     return loader
 
