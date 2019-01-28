@@ -33,9 +33,9 @@ def send_line_notification(message):
 def timer(name, logger=None, level=logging.DEBUG):
     print_ = print if logger is None else lambda msg: logger.log(level, msg)
     t0 = time.time()
-    print_(f'[{name}] start')
+    print_('[{}] start'.format(name))
     yield
-    print_(f'[{name}] done in {time.time() - t0:.0f} s')
+    print_('[{}] done in {:.0f} s'.format(name, time.time() - t0))
 
 
 def timestamp():
