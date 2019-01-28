@@ -26,7 +26,6 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         self._history = None
         self._model = model
         self._gpu = use_gpu and torch.cuda.is_available()
-        self._history = []
 
         args, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop("self")
@@ -57,7 +56,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, self._model.parameters()), lr=MAX_LR)
         scheduler = CyclicLR(optimizer, base_lr=BASE_LR, max_lr=MAX_LR, step_size=STEP_SIZE, mode=MODE, gamma=GAMMA)
 
-        self._history.append({"loss": [], "val_loss": []})
+        self._history = {"loss": [], "val_loss": []}
         for epoch in range(N_EPOCHS):
             start_time = time.time()
             self._model.train()
