@@ -63,6 +63,8 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
             self._model.train()
             avg_loss = 0.
             for i, (x_batch, y_batch) in enumerate(train_loader):
+                print("x_batch: ")
+                print(x_batch.shape)
                 y_pred = self._model(x_batch)
                 if scheduler:
                     scheduler.batch_step()
