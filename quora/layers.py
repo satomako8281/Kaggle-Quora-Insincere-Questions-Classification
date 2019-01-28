@@ -156,9 +156,9 @@ class Attention(nn.Module):
         return torch.sum(weighted_input, 1)
 
 
-class NeuralNet(nn.Module):
+class LSTM_CAPSNET(nn.Module):
     def __init__(self):
-        super(NeuralNet, self).__init__()
+        super(LSTM_CAPSNET, self).__init__()
 
         fc_layer = 16
         fc_layer1 = 16
@@ -223,3 +223,47 @@ class NeuralNet(nn.Module):
 
         return out
 
+
+class LSTM_NET(nn.Module):
+    def __init__(self):
+        super(LSTM_NET, self).__init__()
+
+        hidden_size = 128
+
+        self.embedding = nn.Embedding(MAX_FEATURES, EMBED_SIZE)
+        self.embedding.weight.requires_grad = False
+        self.embedding_dropout = nn.Dropout2d(0.1)
+        self.lstm = nn.LSTM(EMBED_SIZE, hidden_size, bidirectional=True, batch_first=True)
+        self.gru = nn.GRU(hidden_size*2, hidden_size, bidirectional=True, batch_first=True)
+
+        self.lstm_attention = Attention(hidden_size*2, MAXLEN)
+        self.gru_attention = Attention(hidden_size*2, MAXLEN)
+
+        self.linear = nn.Linear(1024, 16)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.1)
+        self.out = nn.Linear(16, 1)
+
+    def set_embedding_weight(self, embedding_matrix=None):
+        if embedding_matrix is not None:
+            self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
+
+    def forward(self, x):
+        h_embedding = self.embedding(x[0])
+        h_embedding = torch.squeeze(self.embedding_dropout(torch.unsqueeze(h_embedding, 0)))
+
+        h_lstm, _ = self.lstm(h_embedding)
+        h_gru, _ = self.gru(h_lstm)
+
+        h_lstm_atten = self.lstm_attention(h_lstm)
+        h_gru_atten = self.gru_attention(h_gru)
+
+        avg_pool = torch.mean(h_gru, 1)
+        max_pool, _ = torch.max(h_gru, 1)
+
+        conc = torch.cat((h_lstm_atten, h_gru_atten, avg_pool, max_pool), 1)
+        conc = self.relu(self.linear(conc))
+        conc = self.dropout(conc)
+        out = self.out(conc)
+
+        return out

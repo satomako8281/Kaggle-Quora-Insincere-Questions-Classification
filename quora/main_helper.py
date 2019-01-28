@@ -14,7 +14,8 @@ from sklearn.linear_model import Lasso
 from tqdm import tqdm
 
 from quora.config import (
-    seed_everything, N_SPLITS, USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, SEED,DEBUG_N, INPUT_PATH, logger
+    seed_everything, N_SPLITS, USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, SEED,DEBUG_N, INPUT_PATH, logger,
+    USE_CACHED_MODELS, DUMP_MODELS
 )
 from quora.embeddings import make_embedding_matrix
 from quora.eval import bestThresshold
@@ -87,7 +88,6 @@ def predict_models_test_batches(models, vectorizer, parallel='thread'):
     test_idx = []
     for df in load_test_iter():
         test_idx.append(df['qid'])
-        print("Predicting batch {} {}".format(df.test_id.min(), df.test_id.max()))
         chunk_preds.append(predict_models(df, models, vectorizer=vectorizer, parallel=parallel))
     predictions = np.vstack(chunk_preds)
     test_idx = np.concatenate(test_idx)
@@ -118,23 +118,32 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             pickle.dump((X_train, y_train, fitted_vectorizer, embedding_matrix), f)
 
     # 以下、CVのコード。  # pilot study用に train_test_splitのコードも作りたい
-    all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
-    all_fitted_models = []
-    splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
-    for i, (tr_idx, va_idx) in enumerate(splits):
-        print('Fold {}'.format(i+1))
+    if USE_CACHED_MODELS:
+        assert name is not None
+        # with open("./input/{}_all_fitted_models.pkl".format(name), 'rb') as f:
+        with open("pytorch_1s_va_preds.pkl", 'rb') as f:  # 決め打ち
+            all_fitted_models = pickle.load(f)
+    else:
+        all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
+        all_fitted_models = []
+        splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
+        for i, (tr_idx, va_idx) in enumerate(splits):
+            print('Fold {}'.format(i+1))
 
-        print("Train with Training Dataset.")
-        X_tr = X_train[tr_idx]
-        y_tr = y_train[tr_idx, np.newaxis]
-        fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
+            print("Train with Training Dataset.")
+            X_tr = X_train[tr_idx]
+            y_tr = y_train[tr_idx, np.newaxis]
+            fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
-        print("Predict with Validation Dataset.")
-        X_va = X_train[va_idx]
-        y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
+            print("Predict with Validation Dataset.")
+            X_va = X_train[va_idx]
+            y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
-        all_fitted_models.append(fitted_models)
-        all_y_va_preds[va_idx] = y_va_preds
+            all_fitted_models.append(fitted_models)
+            all_y_va_preds[va_idx] = y_va_preds
+    if DUMP_MODELS:
+        assert name is not None
+        joblib.dump(all_fitted_models, "./input/{}_all_fitted_models.pkl".format(name), compress=3)
 
     return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
 
@@ -164,12 +173,12 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
         )
         model_round = int(action)
         models, vectorizer = arg_map[model_round]
-
         seed_everything(SEED)
+
         vectorizer, all_fitted_models, y_va, y_va_preds = fit_validate(
             models, vectorizer, name=model_round, fit_parallel=fit_parallel, predict_parallel=predict_parallel
         )
-        joblib.dump(all_fitted_models, "./input/{}_fitted_models.pkl".format(prefix(model_round)), compress=3)
+        joblib.dump(all_fitted_models, "./input/{}_all_fitted_models.pkl".format(prefix(model_round)), compress=3)
         joblib.dump(y_va_preds, "./input/{}_va_preds.pkl".format(prefix(model_round)), compress=3)
         for i in range(y_va_preds.shape[1]):
             delta, f1_score = bestThresshold(y_va, y_va_preds[:, i])
