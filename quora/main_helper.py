@@ -123,10 +123,13 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
     for i, (tr_idx, va_idx) in enumerate(splits):
         print('Fold {}'.format(i+1))
+
+        print('Training Datasetを用いて学習を行います')
         X_tr = X_train[tr_idx]
         y_tr = y_train[tr_idx, np.newaxis]
         fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
+        print('Validation Datasetの予測を行います')
         X_va = X_train[va_idx]
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
