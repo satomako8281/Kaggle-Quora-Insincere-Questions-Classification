@@ -99,6 +99,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
         loader = make_loader(torch_x, shuffle=False)
         for i, (x_batch) in enumerate(loader):
             f = features[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+            x_batch = torch.tensor(x_batch, dtype=torch.long)
             print(type(x_batch))
             print(x_batch.shape)
             print(type(f))
