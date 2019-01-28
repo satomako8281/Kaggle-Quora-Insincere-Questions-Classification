@@ -9,7 +9,7 @@ from quora.classifier import PytorchClassifier
 def define_models_1():
     models = [
         PytorchClassifier(
-            NeuralNet(), use_gpu=False
+            NeuralNet(), use_gpu=True
         )
     ]
 
