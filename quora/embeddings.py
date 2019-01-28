@@ -26,7 +26,7 @@ def load_glove(word_index, use_load_files):
         return word, np.asarray(arr, dtype='float32')[:300]
 
     embedding_file = os.path.join(INPUT_PATH, 'embeddings/glove.840B.300d/glove.840B.300d.txt')
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file))
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file, encoding="utf8", errors='ignore'))
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = -0.005838499, 0.48782197
@@ -52,7 +52,7 @@ def load_fasttext(word_index, use_load_files):
         return word, np.asarray(arr, dtype='float32')
 
     embedding_file = os.path.join(INPUT_PATH, 'embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec')
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file) if len(o) > 100)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file, encoding="utf8", errors='ignore') if len(o) > 100)
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
