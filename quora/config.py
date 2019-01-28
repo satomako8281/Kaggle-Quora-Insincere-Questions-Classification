@@ -6,13 +6,11 @@ import sys
 import numpy as np
 import torch
 
+INPUT_PATH = '~/.kaggle/competitions/quora-insincere-questions-classification/input/'
 
 USE_CACHED_DATASET = int(os.environ.get('USE_CACHED_DATASET', 0))
 
-
-
-
-DEBUG :bool = False
+DEBUG: bool = False
 
 SEED = 1029
 

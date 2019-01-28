@@ -1,10 +1,12 @@
+import os
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from quora.config import DEBUG, DEBUG_N, TEST_SIZE, TEST_CHUNK, VALIDATION_SIZE
+from quora.config import DEBUG, DEBUG_N, TEST_SIZE, TEST_CHUNK, VALIDATION_SIZE, INPUT_PATH
 
 
-def load_train(path='./input/train.csv'):
+def load_train(path=os.path.join(INPUT_PATH, 'train.csv')):
     if DEBUG:
         return pd.read_csv(path).iloc[:DEBUG_N, :]
     else:
@@ -17,7 +19,7 @@ def load_train_validation():
 
 def load_test_iter():
     for _ in range(TEST_SIZE):
-        for df in pd.read_csv('./input/test.csv', chunksize=TEST_CHUNK):
+        for df in pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'), chunksize=TEST_CHUNK):
             if DEBUG:
                 yield df.iloc[:DEBUG_N]
             else:

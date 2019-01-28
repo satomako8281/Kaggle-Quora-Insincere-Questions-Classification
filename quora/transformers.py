@@ -93,7 +93,6 @@ class FeaturesCapsVSLength(BaseEstimator, TransformerMixin):
         return out[['caps_vs_length']].fillna(0).values
 
 class FeaturesWordsVSUnique(BaseEstimator, TransformerMixin):
-
     def fit(self, X, *args):
         return self
 
@@ -109,7 +108,6 @@ class FeaturesWordsVSUnique(BaseEstimator, TransformerMixin):
 
 
 class QuoraTokenizer(BaseEstimator, TransformerMixin):
-
     def fit(self, X, *args):
         return self
 

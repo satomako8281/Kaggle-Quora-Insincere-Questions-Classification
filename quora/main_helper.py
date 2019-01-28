@@ -1,3 +1,4 @@
+import os
 import pickle
 
 import numpy as np
@@ -21,7 +22,7 @@ from quora.quora_io import load_test_iter
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from quora.config import (
-    USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, MAXLEN, SEED,DEBUG_N
+    USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, MAXLEN, SEED,DEBUG_N, INPUT_PATH
 )
 
 tqdm.pandas(desc='Progress')
@@ -31,7 +32,7 @@ USE_LOAD_CASHED_EMBEDDINGS = False
 HANDLE_TEST = False
 
 def fit_transform_vectorizer(vectorizer):
-    df_tr = pd.read_csv("./input/train.csv")
+    df_tr = pd.read_csv(os.path.join(INPUT_PATH, 'train.csv'))
     # df_tr, df_va = load_train_validation()
     y_tr = df_tr['target'].values
     # y_va = df_va['target'].values
@@ -103,7 +104,7 @@ def main(action, arg_map):
         fitted_models, delta = fit_validate(vectorizer)
 
         if HANDLE_TEST:
-            df_test = pd.read_csv("./input/test.csv")
+            df_test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
             x_test = vectorizer.fit_transform(df_test)
             x_test_ = x_test[:, :x_test.shape[1]-2]
             test_features = x_test[:, x_test.shape[1]-2:]

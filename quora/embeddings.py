@@ -1,8 +1,9 @@
 import gc
+import os
 
 import numpy as np
 
-from quora.config import MAX_FEATURES
+from quora.config import MAX_FEATURES, INPUT_PATH
 
 
 def make_embedding_matrix(word_index, use_load_files):
@@ -24,7 +25,7 @@ def load_glove(word_index, use_load_files):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')[:300]
 
-    embedding_file = './input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    embedding_file = os.path.join(INPUT_PATH, 'embeddings/glove.840B.300d/glove.840B.300d.txt')
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file))
 
     all_embs = np.stack(embeddings_index.values())
@@ -50,7 +51,7 @@ def load_fasttext(word_index, use_load_files):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embedding_file = './input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    embedding_file = os.path.join(INPUT_PATH, 'embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec')
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_file) if len(o) > 100)
 
     all_embs = np.stack(embeddings_index.values())
@@ -76,7 +77,7 @@ def load_para(word_index, use_load_files):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embedding_file = './input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    embedding_file = os.path.join(INPUT_PATH, 'embeddings/paragram_300_sl999/paragram_300_sl999.txt')
     embeddings_index = dict(
         get_coefs(*o.split(" ")) for o in open(embedding_file, encoding="utf8", errors='ignore') if len(o) > 100)
 
