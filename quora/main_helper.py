@@ -71,7 +71,7 @@ def fit_validate(vectorizer, name=None, fit_parallel='thread', predict_parallel=
     splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(x_train, y_train))
 
     for i, (train_idx, valid_idx) in enumerate(splits):
-        print(f'Fold {i + 1}')
+        print('Fold {}'.format(i+1))
         model = make_models(embedding_matrix)
         fitted_model, y_va, y_va_preds, avg_loss, avg_val_loss = fit_validate_one_folds(
             model,
