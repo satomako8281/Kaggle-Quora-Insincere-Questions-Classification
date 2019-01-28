@@ -83,7 +83,7 @@ class PytorchClassifier(BaseEstimator, ClassifierMixin):
 
         return self
 
-    def predict(self, X, split_no=None):
+    def predict(self, X):
         self._model.eval()
         X_tr = X[:, :X.shape[1]-2]
         features = X[:, X.shape[1]-2:]
