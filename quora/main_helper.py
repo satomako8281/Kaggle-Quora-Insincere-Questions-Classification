@@ -79,7 +79,7 @@ def map_parallel(fn, lst, parallel, max_processes=4):
     elif parallel is None:
         return list(map(fn, lst))
     else:
-        raise ValueError(f'unexpected parallel value: {parallel}')
+        raise ValueError('unexpected parallel value: {}'.format(parallel))
 
 
 def predict_models_test_batches(models, vectorizer, parallel='thread'):
@@ -198,7 +198,7 @@ def main(name, action, arg_map, fit_parallel='thread', predict_parallel='thread'
                 if HANDLE_TEST:
                     te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
             except Exception as e:
-                print(f'Warning: error loading round {model_round}: {e}')
+                print('Warning: error loading round {}: {}'.format(model_round, e))
                 traceback.print_exc()
         va_preds = np.hstack(va_preds)
         if HANDLE_TEST:
