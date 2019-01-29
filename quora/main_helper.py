@@ -121,7 +121,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
         all_fitted_models = []
         splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
-        tr_idx, va_idx = next(splits)
+        (tr_idx, va_idx) = splits[0]
         # for i, (tr_idx, va_idx) in enumerate(splits):
             # print('Fold {}'.format(i+1))
 
