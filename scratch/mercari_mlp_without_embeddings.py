@@ -114,7 +114,7 @@ puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', 
 def clean_text(x):
     x = str(x)
     for punct in puncts:
-        x = x.replace(punct, f' {punct} ')
+        x = x.replace(punct, ' {} '.format(punct))
     return x
 
 mispell_dict = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'cause": "because", "could've": "could have",
