@@ -19,7 +19,7 @@ import gc
 import re
 import string
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 @contextmanager
 def timer(name):
     t0 = time.time()
