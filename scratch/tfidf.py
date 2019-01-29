@@ -1,6 +1,4 @@
 from sklearn.externals import joblib
-from sklearn.linear_model import Lasso
-import os
 import re
 import string
 import time
@@ -11,8 +9,8 @@ from contextlib import contextmanager
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from sklearn.metrics import f1_score, roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import f1_score
 
 TOKENIZER = re.compile(f'([{string.punctuation}“”¨«»®´·º½¾¿¡§£₤‘’])')
 SEED = 1029
@@ -110,3 +108,4 @@ joblib.dump(test_meta, 'test_pred_tfidf.pkl', compress=3)
 
 search_result = threshold_search(y_val, valid_pred[:, 1])
 print(search_result)
+

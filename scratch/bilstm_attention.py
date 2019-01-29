@@ -386,14 +386,16 @@ seed_everything()
 
 glove_embeddings = load_glove(word_index)
 paragram_embeddings = load_para(word_index)
-fasttext_embeddings = load_fasttext(word_index)
+# fasttext_embeddings = load_fasttext(word_index)
 
-embedding_matrix = np.mean([glove_embeddings, paragram_embeddings, fasttext_embeddings], axis=0)
+# embedding_matrix = np.mean([glove_embeddings, paragram_embeddings, fasttext_embeddings], axis=0)
+embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
 joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
 
 # vocab = build_vocab(df['question_text'])
 # add_lower(embedding_matrix, vocab)
-del glove_embeddings, paragram_embeddings, fasttext_embeddings
+del glove_embeddings, paragram_embeddings
+# del glove_embeddings, paragram_embeddings, fasttext_embeddings
 gc.collect()
 # code inspired from: https://github.com/anandsaha/pytorch.cyclic.learning.rate/blob/master/cls.py
 class CyclicLR(object):
@@ -884,8 +886,8 @@ for i, (x_batch,) in enumerate(test_loader):
 train_preds[valid_idx] = valid_preds_fold
 test_preds += test_preds_fold / 1
 
-joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
 joblib.dump(valid_preds_fold, 'valid_pred_bilstm.pkl', compress=3)
+joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
 
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
 delta = bestThresshold(y_train,train_preds)

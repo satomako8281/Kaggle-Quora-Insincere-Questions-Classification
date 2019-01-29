@@ -1,31 +1,12 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-%matplotlib inline
 from sklearn.externals import joblib
 
-from nltk.tokenize import TweetTokenizer
-import datetime
-import lightgbm as lgb
-from scipy import stats
-from scipy.sparse import hstack, csr_matrix
-from sklearn.model_selection import train_test_split, cross_val_score
-from wordcloud import WordCloud
-from collections import Counter
-from nltk.corpus import stopwords
-from nltk.util import ngrams
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn.multiclass import OneVsRestClassifier
 import time
 pd.set_option('max_colwidth',400)
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-from sklearn.preprocessing import OneHotEncoder
 
 import torch
 import torch.nn as nn
@@ -415,3 +396,8 @@ joblib.dump(test_preds_fold, 'test_pred_pytorch.pkl', compress=3)
 search_result = threshold_search(y_train, train_preds)
 sub['prediction'] = test_preds.mean(1) > search_result['threshold']
 sub.to_csv("submission.csv", index=False)
+
+# del df, df_test, df_train, embedding_matrix, features, mispellings_re, test_features
+# del test_preds, train_idx, train_preds, valid_idx, vocab, word_index, x_test, x_train
+# del y_train
+# gc.collect()

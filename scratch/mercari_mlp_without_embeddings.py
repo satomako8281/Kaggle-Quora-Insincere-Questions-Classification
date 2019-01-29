@@ -1,3 +1,4 @@
+import gc
 from contextlib import contextmanager
 from sklearn.externals import joblib
 from operator import itemgetter
@@ -222,6 +223,7 @@ with timer('run kfold'):
 y_pred[train_count:]/= 1
 scores= []
 thresholds= np.arange(0.1, 0.501, 0.01)
+dev_ids = joblib.load('valid_idx.pkl')
 for thresh in thresholds:
     thresh = np.round(thresh, 2)
     scores.append(f1_score(y_train[dev_ids], (y_pred[:train_count][dev_ids] > thresh).astype(int)))
@@ -229,3 +231,5 @@ for thresh in thresholds:
 joblib.dump(y_pred[:train_count][dev_ids], 'valid_pred_mercari.pkl', compress=3)
 joblib.dump(y_pred[train_count:], 'test_pred_mercari.pkl', compress=3)
 
+del dev_ids, df_test, mispellings_re, test_qids, train_ids, wft, y_pred
+gc.collect()
