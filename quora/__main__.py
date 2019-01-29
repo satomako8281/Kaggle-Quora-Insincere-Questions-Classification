@@ -1,6 +1,6 @@
 import sys
 from quora.main_helper import main
-from quora.datasets import prepare_vectorizer_1, prepare_vectorizer_2
+from quora.datasets import prepare_vectorizer_1, prepare_vectorizer_2, prepare_vectorizer_3
 
 from quora.layers import LSTM_CAPSNET, LSTM_NET
 from quora.config import MAX_LR
