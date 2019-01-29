@@ -1,3 +1,4 @@
+import os
 import gc
 from contextlib import contextmanager
 from sklearn.externals import joblib
@@ -18,6 +19,7 @@ import gc
 import re
 import string
 
+INPUT_PATH = '../input'
 @contextmanager
 def timer(name):
     t0 = time.time()
@@ -180,8 +182,8 @@ vectorizer = make_union(
     )
 
 with timer('process train'):
-    df_train = pd.read_csv("../input/train.csv")
-    df_test = pd.read_csv("../input/test.csv")
+    df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+    df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     train_count= len(df_train)
     test_count= len(df_test)
     test_qids= df_test['qid']

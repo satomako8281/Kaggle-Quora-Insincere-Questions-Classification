@@ -1,4 +1,5 @@
 from sklearn.externals import joblib
+import os
 import re
 import string
 import time
@@ -14,6 +15,7 @@ from sklearn.metrics import f1_score
 
 TOKENIZER = re.compile(f'([{string.punctuation}“”¨«»®´·º½¾¿¡§£₤‘’])')
 SEED = 1029
+INPUT_PATH = '../input'
 
 
 @contextmanager
@@ -59,11 +61,10 @@ def threshold_search(y_true, y_proba):
     search_result = {'threshold': best_threshold, 'f1': best_score}
     return search_result
 
-
 with timer("reading_data"):
-    train = pd.read_csv("./input/train.csv")
-    test = pd.read_csv('./input/test.csv')
-    sub = pd.read_csv('./input/sample_submission.csv')
+    train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+    test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
+    sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values
 
 with timer("getting ngram tfidf"):

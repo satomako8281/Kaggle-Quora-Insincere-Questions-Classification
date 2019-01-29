@@ -4,6 +4,7 @@ import random
 import pandas as pd
 import numpy as np
 import gc
+import os
 import re
 import torch
 from torchtext import data
@@ -43,6 +44,7 @@ batch_size = 512 # how many samples to process at once
 n_epochs = 5 # how many times to iterate over all samples
 n_splits = 5 # Number of K-fold Splits
 
+INPUT_PATH = '../input'
 SEED = 1029
 def seed_everything(seed=1029):
     random.seed(seed)
@@ -56,7 +58,7 @@ seed_everything()
 ## FUNCTIONS TAKEN FROM https://www.kaggle.com/gmhost/gru-capsule
 
 def load_glove(word_index):
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = os.path.join(INPUT_PATH ,'embeddings/glove.840B.300d/glove.840B.300d.txt')
     def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')[:300]
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE))
 
@@ -77,7 +79,7 @@ def load_glove(word_index):
     return embedding_matrix
 
 def load_fasttext(word_index):
-    EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    EMBEDDING_FILE = os.path.join(INPUT_PATH, 'embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec')
     def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if len(o)>100)
 
@@ -97,7 +99,7 @@ def load_fasttext(word_index):
     return embedding_matrix
 
 def load_para(word_index):
-    EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    EMBEDDING_FILE = os.path.join(INPUT_PATH, 'embeddings/paragram_300_sl999/paragram_300_sl999.txt')
     def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8", errors='ignore') if len(o)>100)
 
@@ -116,8 +118,8 @@ def load_para(word_index):
 
     return embedding_matrix
 
-df_train = pd.read_csv("../input/train.csv")
-df_test = pd.read_csv("../input/test.csv")
+df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 df = pd.concat([df_train ,df_test],sort=True)
 
 def build_vocab(texts):
@@ -310,8 +312,8 @@ def add_features(df):
 
 
 def load_and_prec():
-    train_df = pd.read_csv("../input/train.csv")
-    test_df = pd.read_csv("../input/test.csv")
+    train_df = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+    test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 

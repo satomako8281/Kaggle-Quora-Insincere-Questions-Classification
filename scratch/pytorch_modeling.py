@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 from sklearn.externals import joblib
@@ -22,6 +24,7 @@ warnings.filterwarnings("ignore", message="F-score is ill-defined and being set 
 import re
 
 
+INPUT_PATH = '../input'
 splits = 1
 def seed_torch(seed=1029):
     random.seed(seed)
@@ -30,10 +33,9 @@ def seed_torch(seed=1029):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
-
-train = pd.read_csv("../input/train.csv")
-test = pd.read_csv("../input/test.csv")
-sub = pd.read_csv('../input/sample_submission.csv')
+train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
 
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
