@@ -88,12 +88,16 @@ class MispellFixer(BaseEstimator, TransformerMixin):
     def fit(self, X, *arg):
         return self
 
-    def replace(self, match):
-        return self.mispell_dict[match.group(0)]
+    def _get_mispell(self, mispell_dict):
+        mispell_re = re.compile('(%s)' % '|'.join(mispell_dict.keys()))
+        return mispell_dict, mispell_re
 
-    def transform(self, X):
-        mispellings_re = re.compile('(%s)' % '|'.join(self.mispell_dict.keys()))
-        return mispellings_re.sub(self.replace, X)
+    mispellings, mispellings_re = _get_mispell(mispell_dict)
+
+    def transform(self, text):
+        def replace(match):
+            return self.mispellings[match.group(0)]
+        return self.mispellings_re.sub(replace, text)
 
 
 class FillEmpty(BaseEstimator, TransformerMixin):
