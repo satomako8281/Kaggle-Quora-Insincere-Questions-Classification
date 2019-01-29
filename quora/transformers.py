@@ -88,11 +88,11 @@ class MispellFixer(BaseEstimator, TransformerMixin):
     def fit(self, X, *arg):
         return self
 
-    def _get_mispell(self, mispell_dict):
-        mispell_re = re.compile('(%s)' % '|'.join(mispell_dict.keys()))
-        return mispell_dict, mispell_re
+    def _get_mispell(self):
+        mispell_re = re.compile('(%s)' % '|'.join(self.mispell_dict.keys()))
+        return self.mispell_dict, mispell_re
 
-    mispellings, mispellings_re = _get_mispell(mispell_dict)
+    mispellings, mispellings_re = _get_mispell()
 
     def transform(self, text):
         def replace(match):
