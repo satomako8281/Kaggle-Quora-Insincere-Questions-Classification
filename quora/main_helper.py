@@ -121,22 +121,25 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         all_y_va_preds = np.zeros((len(X_train)))[:, np.newaxis]
         all_fitted_models = []
         splits = list(StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED).split(X_train, y_train))
-        for i, (tr_idx, va_idx) in enumerate(splits):
-            print('Fold {}'.format(i+1))
+        tr_idx, va_idx = next(splits)
+        # for i, (tr_idx, va_idx) in enumerate(splits):
+            # print('Fold {}'.format(i+1))
 
-            print("Train with Training Dataset.")
-            X_tr = X_train[tr_idx]
-            y_tr = y_train[tr_idx, np.newaxis]
-            fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
+        print("Train with Training Dataset.")
+        X_tr = X_train[tr_idx]
+        y_tr = y_train[tr_idx, np.newaxis]
+        fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
-            print("Predict with Validation Dataset.")
-            X_va = X_train[va_idx]
-            y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
+        print("Predict with Validation Dataset.")
+        X_va = X_train[va_idx]
+        y_va = y_train[tr_idx, np.newaxis]
+        y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
-            all_fitted_models.append(fitted_models)
-            all_y_va_preds[va_idx] = y_va_preds
+        # all_fitted_models.append(fitted_models)
+        # all_y_va_preds[va_idx] = y_va_preds
 
-    return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
+    # return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
+    return fitted_vectorizer, fitted_models, y_train, y_va_preds
 
 
 def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
@@ -216,7 +219,7 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     elif action == "merge_describe":
         va_preds = []
         te_preds = []
-        for model_round in ("1", "2", "3"):
+        for model_round in ("1", "2", "3", "4"):
             va_preds.append(joblib.load("./input/{}_va_preds.pkl".format(prefix(model_round))))
             # te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
         va_preds = np.hstack(va_preds)
