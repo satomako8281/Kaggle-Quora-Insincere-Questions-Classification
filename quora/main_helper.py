@@ -220,13 +220,13 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     elif action == "merge_describe":
         va_preds = []
         te_preds = []
-        for model_round in ("1", "2"):
+        for model_round in ("1", "2", "3", "4"):
             va_preds.append(joblib.load("./input/{}_va_preds.pkl".format(prefix(model_round))))
             # te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
         va_preds = np.hstack(va_preds)
         # te_preds = np.hstack(te_preds)
         # _, df_va = load_train_validation()
-        y_va = joblib.load("./input/va.pkl")
+        y_va = joblib.load("./input/y_va.pkl")
         y_va = y_va.flatten()
         te_preds=None
         va_preds_merged, te_preds_merged = merge_predictions(X_tr=va_preds, y_tr=y_va, X_te=te_preds)
