@@ -139,7 +139,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         # all_y_va_preds[va_idx] = y_va_preds
 
     # return fitted_vectorizer, all_fitted_models, y_train, all_y_va_preds
-    return fitted_vectorizer, fitted_models, y_train, y_va_preds
+    return fitted_vectorizer, fitted_models, y_va, y_va_preds
 
 
 def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
