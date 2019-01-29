@@ -118,13 +118,14 @@ def prepare_vectorizer_3():
                 )
             ),
             make_pipeline(
-                PandasSelector(columns=['num_words', 'num_singletons', 'caps_vs_length'], return_vector=False),
-                MaxAbsScaler()),
+                PandasSelector(columns=['question_text']),
+                FeaturesCapsVSLength(),
+                MaxAbsScaler(),
             ),
             make_pipeline(
                 PandasSelector(columns=['question_text']),
-                FeaturesCapsVSLength(),
-                StandardScaler(),
+                FeaturesWordsVSUnique(),
+                MaxAbsScaler(),
             ),
         ReportShape()
     )
