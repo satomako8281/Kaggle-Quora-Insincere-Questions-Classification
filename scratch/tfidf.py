@@ -61,9 +61,9 @@ def threshold_search(y_true, y_proba):
 
 
 with timer("reading_data"):
-    train = pd.read_csv("../input/train.csv")
-    test = pd.read_csv('../input/test.csv')
-    sub = pd.read_csv('../input/sample_submission.csv')
+    train = pd.read_csv("./input/train.csv")
+    test = pd.read_csv('./input/test.csv')
+    sub = pd.read_csv('./input/sample_submission.csv')
     y = train.target.values
 
 with timer("getting ngram tfidf"):
