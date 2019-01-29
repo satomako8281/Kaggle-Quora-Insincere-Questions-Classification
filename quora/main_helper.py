@@ -58,12 +58,13 @@ def fit_transform_vectorizer(vectorizer):
     X_tr = vectorizer.fit_transform(df_tr, y_tr)
     tokenizer = Tokenizer(num_words=MAX_FEATURES)
     tokenizer.fit_on_texts(list(df_tr['question_text']))
-    embedding_matrix = make_embedding_matrix(tokenizer.word_index)
+    # embedding_matrix = make_embedding_matrix(tokenizer.word_index)  # あとで戻す
+    embedding_matrix = [0]
 
     return X_tr, y_tr, vectorizer, embedding_matrix
 
 
-def fit_models(X_tr, y_tr, models, embedding_matrix, parallel='thread'):
+def fit_models(X_tr, y_tr, models, embedding_matrix=None, parallel='thread'):
     fit_one_ = partial(fit_one, X=X_tr, y=y_tr, embedding_matrix=embedding_matrix)
     return map_parallel(fit_one_, models, parallel)
 
@@ -111,6 +112,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]
     else:
         X_train, y_train, fitted_vectorizer, embedding_matrix = fit_transform_vectorizer(vectorizer)
+        X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]  # あとで消す
     if DUMP_DATASET:
         assert name is not None
         with open(cached_path, 'wb') as f:
@@ -131,7 +133,8 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             print("Train with Training Dataset.")
             X_tr = X_train[tr_idx]
             y_tr = y_train[tr_idx, np.newaxis]
-            fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
+            # fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
+            fitted_models = fit_models(X_tr, y_tr, models, parallel=fit_parallel)
 
             print("Predict with Validation Dataset.")
             X_va = X_train[va_idx]
