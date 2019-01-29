@@ -125,8 +125,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
         # for i, (tr_idx, va_idx) in enumerate(splits):
             # print('Fold {}'.format(i+1))
 
-        y_va = y_train[va_idx, np.newaxis]
-        joblib.dump(y_va, "./input/va.pkl", compress=3)
+        joblib.dump(va_idx, "./input/va_idx.pkl", compress=3)
         print("Train with Training Dataset.")
         X_tr = X_train[tr_idx]
         y_tr = y_train[tr_idx, np.newaxis]
@@ -134,6 +133,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
 
         print("Predict with Validation Dataset.")
         X_va = X_train[va_idx]
+        y_va = y_train[va_idx, np.newaxis]
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
         # all_fitted_models.append(fitted_models)
@@ -220,13 +220,14 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     elif action == "merge_describe":
         va_preds = []
         te_preds = []
-        for model_round in ("1", "2", "3", "4"):
+        for model_round in ("1", "2"):
             va_preds.append(joblib.load("./input/{}_va_preds.pkl".format(prefix(model_round))))
             # te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
         va_preds = np.hstack(va_preds)
         # te_preds = np.hstack(te_preds)
         # _, df_va = load_train_validation()
-        y_va = joblib.load("./input/y_va.pkl")
+        y_va = joblib.load("./input/va.pkl")
+        y_va = y_va.flatten()
         te_preds=None
         va_preds_merged, te_preds_merged = merge_predictions(X_tr=va_preds, y_tr=y_va, X_te=te_preds)
         print(va_preds_merged.shape)
