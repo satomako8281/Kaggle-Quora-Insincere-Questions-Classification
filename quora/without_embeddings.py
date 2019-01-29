@@ -179,8 +179,8 @@ def main():
         )
 
     with timer('process train'):
-        df_train = pd.read_csv("../input/train.csv")
-        df_test = pd.read_csv("../input/test.csv")
+        df_train = pd.read_csv("./input/train.csv")
+        df_test = pd.read_csv("./input/test.csv")
         train_count= len(df_train)
         test_count= len(df_test)
         test_qids= df_test['qid']
