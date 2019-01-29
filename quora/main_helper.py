@@ -54,6 +54,7 @@ def predict_models(X, fitted_models, vectorizer=None, parallel='thread'):
 
 def fit_transform_vectorizer(vectorizer):
     df_tr = pd.read_csv(os.path.join(INPUT_PATH, 'train.csv'))
+    df_tr = df_tr[:DEBUG_N]  # あとで消す
     y_tr = df_tr['target'].values
     X_tr = vectorizer.fit_transform(df_tr, y_tr)
     tokenizer = Tokenizer(num_words=MAX_FEATURES)
@@ -112,7 +113,6 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]
     else:
         X_train, y_train, fitted_vectorizer, embedding_matrix = fit_transform_vectorizer(vectorizer)
-        X_train, y_train = X_train[:DEBUG_N], y_train[:DEBUG_N]  # あとで消す
     if DUMP_DATASET:
         assert name is not None
         with open(cached_path, 'wb') as f:

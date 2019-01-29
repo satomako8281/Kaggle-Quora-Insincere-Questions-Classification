@@ -8,7 +8,7 @@ import torch
 
 INPUT_PATH = os.environ.get('INPUT_PATH', './input/')
 N_CORES = 4
-DEBUG_N = 0
+DEBUG_N = 1500
 DEBUG = DEBUG_N > 0
 TEST_SIZE = int(os.environ.get('TEST_SIZE', 1))
 VALIDATION_SIZE = float(os.environ.get('VALIDATION_SIZE', 0.05))
