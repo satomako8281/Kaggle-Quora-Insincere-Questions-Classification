@@ -84,7 +84,7 @@ def prepare_vectorizer_2():
 
 
 def prepare_vectorizer_3():
-    tokenizer = re.compile(f'([{string.punctuation}“”¨«»®´·º½¾¿¡§£₤‘’])')
+    tokenizer = re.compile('([{}“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
 
     def on_field(f: str, *vec):
         return make_pipeline(FunctionTransformer(itemgetter(f), validate=False), *vec)
