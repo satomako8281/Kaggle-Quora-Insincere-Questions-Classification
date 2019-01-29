@@ -20,7 +20,7 @@ import string
 def timer(name):
     t0 = time.time()
     yield
-    print(f'[{name}] done in {time.time() - t0:.0f} s')
+    # print(f"[{}] done in {} s".format(name, time.time() - t0))
 
 def on_field(f: str, *vec) -> Pipeline:
     return make_pipeline(FunctionTransformer(itemgetter(f), validate=False), *vec)
