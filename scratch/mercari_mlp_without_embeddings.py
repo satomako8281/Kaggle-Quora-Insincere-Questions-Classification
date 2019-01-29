@@ -24,7 +24,7 @@ INPUT_PATH = './input'
 def timer(name):
     t0 = time.time()
     yield
-    print(f'[{name}] done in {time.time() - t0:.0f} s')
+    print('[{}] done in {:.0f} s'.format(name, time.time() - t0))
 
 def on_field(f: str, *vec) -> Pipeline:
     return make_pipeline(FunctionTransformer(itemgetter(f), validate=False), *vec)
@@ -92,7 +92,7 @@ def fit_predict(xs) -> np.ndarray:
         model = K.Model(model_in, out)
         model.compile(loss='logcosh', optimizer=K.optimizers.Adam(lr=3e-3), metrics=['accuracy'])
         for i in range(3):
-            with timer(f'epoch {i + 1}'):
+            with timer('epoch {}'.format(i + 1)):
                 model.fit(x=X_train[train_ids,:], y=y_train[train_ids], batch_size=2**(11 + i), epochs=1, verbose=0)
         preds = np.zeros(X_train.shape[0])
         preds[dev_ids] = model.predict(X_train[dev_ids, :])[:, 0]
@@ -168,7 +168,7 @@ def replace_typical_misspell(text):
         return mispellings[match.group(0)]
     return mispellings_re.sub(replace, text)
 
-TOKENIZER = re.compile(f'([{string.punctuation}“”¨«»®´·º½¾¿¡§£₤‘’])')
+TOKENIZER = re.compile('([{}“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
 
 def tokenize(s):
     return TOKENIZER.sub(r' \1 ', s).split()

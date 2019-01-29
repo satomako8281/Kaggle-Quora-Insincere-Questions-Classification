@@ -24,7 +24,7 @@ warnings.filterwarnings("ignore", message="F-score is ill-defined and being set 
 import re
 
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 splits = 1
 def seed_torch(seed=1029):
     random.seed(seed)
