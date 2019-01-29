@@ -92,7 +92,7 @@ class MispellFixer(BaseEstimator, TransformerMixin):
         mispell_re = re.compile('(%s)' % '|'.join(self.mispell_dict.keys()))
         return self.mispell_dict, mispell_re
 
-    mispellings, mispellings_re = _get_mispell()
+    mispellings, mispellings_re = self._get_mispell()
 
     def transform(self, text):
         def replace(match):
