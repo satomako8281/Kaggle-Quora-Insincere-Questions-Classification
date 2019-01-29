@@ -132,7 +132,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
 
         print("Predict with Validation Dataset.")
         X_va = X_train[va_idx]
-        y_va = y_train[tr_idx, np.newaxis]
+        y_va = y_train[va_idx, np.newaxis]
         y_va_preds = predict_models(X_va, fitted_models, parallel=predict_parallel)
 
         # all_fitted_models.append(fitted_models)
