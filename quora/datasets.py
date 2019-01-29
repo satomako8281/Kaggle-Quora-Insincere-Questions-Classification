@@ -127,6 +127,7 @@ def prepare_vectorizer_3():
                 FeaturesWordsVSUnique(),
                 MaxAbsScaler(),
             ),
+        ),
         ReportShape()
     )
 
