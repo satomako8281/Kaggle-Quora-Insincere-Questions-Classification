@@ -54,18 +54,16 @@ def predict_models(X, fitted_models, vectorizer=None, parallel='thread'):
 
 def fit_transform_vectorizer(vectorizer):
     df_tr = pd.read_csv(os.path.join(INPUT_PATH, 'train.csv'))
-    df_tr = df_tr[:DEBUG_N]  # あとで消す
     y_tr = df_tr['target'].values
     X_tr = vectorizer.fit_transform(df_tr, y_tr)
     tokenizer = Tokenizer(num_words=MAX_FEATURES)
     tokenizer.fit_on_texts(list(df_tr['question_text']))
-    # embedding_matrix = make_embedding_matrix(tokenizer.word_index)  # あとで戻す
-    embedding_matrix = [0]
+    embedding_matrix = make_embedding_matrix(tokenizer.word_index)
 
     return X_tr, y_tr, vectorizer, embedding_matrix
 
 
-def fit_models(X_tr, y_tr, models, embedding_matrix=None, parallel='thread'):
+def fit_models(X_tr, y_tr, models, embedding_matrix, parallel='thread'):
     fit_one_ = partial(fit_one, X=X_tr, y=y_tr, embedding_matrix=embedding_matrix)
     return map_parallel(fit_one_, models, parallel)
 
@@ -133,8 +131,7 @@ def fit_validate(models, vectorizer, name=None, fit_parallel='thread', predict_p
             print("Train with Training Dataset.")
             X_tr = X_train[tr_idx]
             y_tr = y_train[tr_idx, np.newaxis]
-            # fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
-            fitted_models = fit_models(X_tr, y_tr, models, parallel=fit_parallel)
+            fitted_models = fit_models(X_tr, y_tr, models, embedding_matrix, parallel=fit_parallel)
 
             print("Predict with Validation Dataset.")
             X_va = X_train[va_idx]
