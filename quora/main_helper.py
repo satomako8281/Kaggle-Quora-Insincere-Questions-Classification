@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 from quora.config import (
     seed_everything, N_SPLITS, USE_CACHED_DATASET, DUMP_DATASET, MAX_FEATURES, SEED,DEBUG_N, INPUT_PATH, logger,
-    USE_CACHED_MODELS
+    USE_CACHED_MODELS, HANDLE_TEST
 )
 from quora.embeddings import make_embedding_matrix
 from quora.eval import bestThresshold
@@ -24,10 +24,6 @@ from quora.quora_io import load_test_iter
 
 
 tqdm.pandas(desc='Progress')
-
-USE_LOAD_CASED_DATASET = False
-USE_LOAD_CASHED_EMBEDDINGS = False
-HANDLE_TEST = True
 
 
 def fit_one(est, X, y, embedding_matrix=None):
@@ -147,14 +143,14 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
     if est is None:
         est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
                     positive=True, random_state=9999, selection='random')
-    est.fit(np.log1p(X_tr), np.log1p(y_tr))
+    est.fit(X_tr, y_tr)
     if hasattr(est, 'intercept_') and verbose:
         logger.info('merge_predictions = \n{:+.4f}\n{}'.format(
             est.intercept_,
             '\n'.join('{:+.4f} * {}'.format(coef, i) for i, coef in
                       zip(range(X_tr.shape[0]), est.coef_))))
-    return (np.expm1(est.predict(np.log1p(X_tr))),
-            np.expm1(est.predict(np.log1p(X_te))) if X_te is not None else None)
+    return (est.predict(X_tr),
+            est.predict(X_te) if X_te is not None else None)
 
 
 def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
@@ -195,11 +191,13 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
     elif action == "merge":
         va_preds = []
         te_preds = []
-        for model_round in ('1', '2'):
+        for model_round in ('1', '2', '3'):
             try:
-                va_preds.append(joblib.load("{}_va_preds.pkl".format(prefix(model_round))))
+                va_pred = joblib.load("./input/{}_va_preds.pkl".format(prefix(model_round)))
+                print(va_pred.shape)
+                va_preds.append(va_pred)
                 if HANDLE_TEST:
-                    te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
+                    te_preds.append(joblib.load("./input/{}_te_preds.pkl".format(prefix(model_round))))
             except Exception as e:
                 print('Warning: error loading round {}: {}'.format(model_round, e))
                 traceback.print_exc()
@@ -208,9 +206,30 @@ def main(name, action, arg_map, fit_parallel=None, predict_parallel=None):
             te_preds = np.hstack(te_preds)
         else:
             te_preds = None
-        y_va = joblib.load("y_va.pkl")
+        y_va = joblib.load("./input/y_va.pkl")
+        print(y_va.shape)
         va_preds_merged, te_preds_merged = merge_predictions(X_tr=va_preds, y_tr=y_va, X_te=te_preds)
         if HANDLE_TEST:
             test_idx = joblib.load("test_idx.pkl")
             make_submission(test_idx, te_preds_merged, 'submission_merged.csv')
 
+    elif action == "merge_describe":
+        va_preds = []
+        te_preds = []
+        for model_round in ("1", "2", "3"):
+            va_preds.append(joblib.load("./input/{}_va_preds.pkl".format(prefix(model_round))))
+            # te_preds.append(joblib.load("{}_te_preds.pkl".format(prefix(model_round))))
+        va_preds = np.hstack(va_preds)
+        # te_preds = np.hstack(te_preds)
+        # _, df_va = load_train_validation()
+        y_va = joblib.load("./input/y_va.pkl")
+        te_preds=None
+        va_preds_merged, te_preds_merged = merge_predictions(X_tr=va_preds, y_tr=y_va, X_te=te_preds)
+        print(va_preds_merged.shape)
+        print(np.array(va_preds_merged).shape)
+        print(y_va.shape)
+        delta, f1_score = bestThresshold(y_va, va_preds_merged)
+        print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
+        # df_va['preds'] = va_preds_merged
+        # df_va['err'] = (np.log1p(df_va['preds']) - np.log1p(df_va['price'])) ** 2
+        # df_va.sort_values('err', ascending=False).to_csv('validation_preds.csv', index=False)

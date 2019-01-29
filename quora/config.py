@@ -13,10 +13,10 @@ DEBUG = DEBUG_N > 0
 TEST_SIZE = int(os.environ.get('TEST_SIZE', 1))
 VALIDATION_SIZE = float(os.environ.get('VALIDATION_SIZE', 0.05))
 DUMP_DATASET = False
-USE_CACHED_DATASET = False
+USE_CACHED_DATASET = True
 USE_CACHED_MODELS = False
 USE_CASHED_EMBEDDINGS = True
-HANDLE_TEST = int(os.environ.get('HANDLE_TEST', 1))
+HANDLE_TEST = False
 TEST_CHUNK = 350000
 
 # use "train" or "pred"
@@ -24,7 +24,7 @@ EMBED_SIZE = 300
 MAX_FEATURES = 120000 # how many unique words to use (i.e num rows in embedding vector)
 MAXLEN = 70 # max number of words in a question to use
 BATCH_SIZE = 512 # how many samples to process at once
-N_EPOCHS = 1 # how many times to iterate over all samples
+N_EPOCHS = 2 # how many times to iterate over all samples
 N_SPLITS = 5 # Number of K-fold Splits
 
 # use "layers"

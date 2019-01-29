@@ -227,7 +227,7 @@ def main():
         thresh = np.round(thresh, 2)
         scores.append(f1_score(y_train, (y_pred[:train_count] > thresh).astype(int)))
         print("F1 score at threshold {0} is {1}".format(thresh, scores[-1]))
-    np.save('define_model3_y_pred.npy', y_pred[:train_count])
+    np.save('pytorch_3s_va_preds.npy', y_pred[:train_count])
     max_idx= np.argmax(scores)
     print(pd.Series(y_pred[:train_count]> thresholds[max_idx]).astype(int).value_counts())
     print(pd.Series(y_pred[train_count:]> thresholds[max_idx]).astype(int).value_counts())
