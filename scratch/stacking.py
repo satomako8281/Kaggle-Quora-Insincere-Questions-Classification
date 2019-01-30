@@ -106,6 +106,10 @@ delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
 y_test = joblib.load('valid_for_emsemble_lable.pkl').values[:, np.newaxis]
+print(y_va.shape)
+print(va_preds_merged.shape)
+print(y_test.shape)
+print(te_preds_merged.shape)
 delta, f1_score = bestThresshold(y_test, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
