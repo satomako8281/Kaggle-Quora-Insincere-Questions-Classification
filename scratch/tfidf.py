@@ -70,7 +70,7 @@ with timer("reading_data"):
 
     joblib.dump(train, 'train.pkl', compress=3)
     joblib.dump(test, 'valid_for_emsemble.pkl', compress=3)
-    joblib.dump(test['target'], 'valid_for_emsemble_label.pkl', compress=3)
+    # joblib.dump(test['target'], 'valid_for_emsemble_label.pkl', compress=3)
 
     sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values
