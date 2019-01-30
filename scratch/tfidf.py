@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import f1_score
 
 TOKENIZER = re.compile('([{}“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
@@ -65,6 +65,12 @@ with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
     sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
+    train, valid = train_test_split(
+        train, test_size=0.05, random_state=SEED, stratify=train['target']
+    )
+    joblib.dump(valid, 'valid_for_emsemble.pkl', compress=3)
+    del valid
+
     y = train.target.values
 
 with timer("getting ngram tfidf"):

@@ -40,12 +40,10 @@ va_preds_merged = (
     0.36 * va_preds[:, 3]
 )
 
-print(va_preds_merged.shape)
-print(y_va.shape)
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
-df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-submission = df_test[['qid']].copy()
-submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission.csv', index=False)
+# df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+# submission = df_test[['qid']].copy()
+# submission['prediction'] = (te_preds_merged > delta).astype(int)
+# submission.to_csv('submission.csv', index=False)
