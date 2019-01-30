@@ -383,14 +383,13 @@ seed_everything()
 
 # fasttext_embeddings = load_fasttext(word_index)
 
-# embedding_matrix = np.mean([glove_embeddings, paragram_embeddings, fasttext_embeddings], axis=0)
-# glove_embeddings = load_glove(word_index)
-# paragram_embeddings = load_para(word_index)
-# embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
-# joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
-# del glove_embeddings, paragram_embeddings
+glove_embeddings = load_glove(word_index)
+paragram_embeddings = load_para(word_index)
+embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
+joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
+del glove_embeddings, paragram_embeddings
 
-embedding_matrix = joblib.load('embedding_matrix.pkl')
+# embedding_matrix = joblib.load('embedding_matrix.pkl')
 
 # vocab = build_vocab(df['question_text'])
 # add_lower(embedding_matrix, vocab)
