@@ -89,7 +89,7 @@ with timer("get Naive Bayes feature"):
 models = []
 train_meta = np.zeros(y.shape)
 test_meta = np.zeros(X_test.shape[0])
-splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED).split(train, y))
+splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
 (train_idx, valid_idx) = splits[0]
 joblib.dump(train_idx, 'train_idx.pkl', compress=3)
 joblib.dump(valid_idx, 'valid_idx.pkl', compress=3)
