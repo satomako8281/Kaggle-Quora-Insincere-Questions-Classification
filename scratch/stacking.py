@@ -74,24 +74,24 @@ va_preds = np.hstack(va_preds)
 te_preds = np.hstack(te_preds)
 y_va = joblib.load("y_val.pkl")
 
-# from lightgbm import LGBMRegressor
-# est = LGBMRegressor(
-#     max_depth=10, learning_rate=0.0025, random_state=5
-# )
+from lightgbm import LGBMRegressor
+est = LGBMRegressor(
+    max_depth=10, learning_rate=0.0025, random_state=5
+)
 
-import xgboost as xgb
-est = xgb.XGBClassifier(
-    #learning_rate = 0.02,
- n_estimators= 2000,
- max_depth= 4,
- min_child_weight= 2,
- #gamma=1,
- gamma=0.9,
- subsample=0.8,
- colsample_bytree=0.8,
- objective= 'binary:logistic',
- nthread= -1,
- scale_pos_weight=1)
+# import xgboost as xgb
+# est = xgb.XGBClassifier(
+#     #learning_rate = 0.02,
+#  n_estimators= 2000,
+#  max_depth= 4,
+#  min_child_weight= 2,
+#  #gamma=1,
+#  gamma=0.9,
+#  subsample=0.8,
+#  colsample_bytree=0.8,
+#  objective= 'binary:logistic',
+#  nthread= -1,
+#  scale_pos_weight=1)
 
 # from sklearn.ensemble import RandomForestClassifier
 # est = RandomForestClassifier()
