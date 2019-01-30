@@ -54,7 +54,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
     fti = est.feature_importances_
 
     print('Feature Importances:')
-    for i, feat in enumerate(range(len(X_tr))):
+    for i, feat in enumerate(range(4)):
         print('\t{} : {:>.6f}'.format(feat, fti[i]))
 
 
