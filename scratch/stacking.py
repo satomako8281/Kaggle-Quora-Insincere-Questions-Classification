@@ -30,7 +30,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
 
 va_preds = []
 te_preds = []
-va_preds.append(joblib.load("valid_pred_tfidf.pkl"))
+va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_mercari.pkl"))
 va_preds.append(joblib.load("valid_pred_bilstm.pkl"))
 va_preds.append(joblib.load("valid_pred_pytorch.pkl"))
