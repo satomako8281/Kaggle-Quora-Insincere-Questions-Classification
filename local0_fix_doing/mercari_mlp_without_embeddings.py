@@ -183,13 +183,14 @@ vectorizer = make_union(
 
 with timer('process train'):
     # df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    # df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     df_train = joblib.load('train.pkl')
     df_test = joblib.load('valid_for_emsemble.pkl')
+    df_lb_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     train_count= len(df_train)
     test_count= len(df_test)
+    lb_test_count= len(df_lb_test)
     test_qids= df_test['qid']
-    df_train= pd.concat([df_train, df_test], sort=False).reset_index(drop=True)
+    df_train= pd.concat([df_train, df_test, df_lb_test], sort=False).reset_index(drop=True)
     print(df_train.shape)
 
     df_train["question_text"] = df_train["question_text"].str.lower()\
@@ -213,12 +214,12 @@ with timer('process train'):
 
 n_reps = 8
 
-y_pred = np.zeros(train_count + test_count)
+y_pred = np.zeros(train_count + test_count + lb_test_count)
 with timer('run kfold'):
     datasets= []
     train_ids = joblib.load('train_idx.pkl')
     dev_ids = joblib.load('valid_idx.pkl')
-    dev_ids= list(dev_ids)+list(range(train_count, train_count+test_count))
+    dev_ids= list(dev_ids)+list(range(train_count, train_count+test_count+lb_test_count))
     for rep in range(n_reps):
         datasets.append([X_train, y_train, train_ids, dev_ids])
     ###with ThreadPool(processes=2) as pool:
@@ -233,7 +234,8 @@ for thresh in thresholds:
     scores.append(f1_score(y_train[dev_ids], (y_pred[:train_count][dev_ids] > thresh).astype(int)))
     print("F1 score at threshold {0} is {1}".format(thresh, scores[-1]))
 joblib.dump(y_pred[:train_count][dev_ids], 'valid_pred_mercari.pkl', compress=3)
-joblib.dump(y_pred[train_count:], 'test_pred_mercari.pkl', compress=3)
+joblib.dump(y_pred[train_count:test_count], 'test_pred_mercari.pkl', compress=3)
+joblib.dump(y_pred[test_count:], 'lb_test_pred_mercari.pkl', compress=3)
 
 # del dev_ids, df_test, mispellings_re, test_qids, train_ids, wft, y_pred
 # gc.collect()
