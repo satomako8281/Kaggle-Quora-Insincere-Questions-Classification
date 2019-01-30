@@ -102,6 +102,14 @@ va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds,
     est=est
 )
+
+print(va_preds.shape)
+print(va_preds[:,0])
+print(va_preds[:,1])
+print(va_preds[:,2])
+print(va_preds[:,3])
+
+
 for idx in range(4):
     delta, f_score = bestThresshold(y_va, va_preds[:, idx])
     print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
