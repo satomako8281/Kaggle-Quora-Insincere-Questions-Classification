@@ -30,7 +30,7 @@ INPUT_PATH = './input'
 
 train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
 # test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-test = joblib.load('valid_for_emsemble_features.pkl')
+test = joblib.load('valid_for_emsemble.pkl')
 sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',

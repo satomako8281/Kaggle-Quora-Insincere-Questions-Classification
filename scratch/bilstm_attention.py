@@ -112,7 +112,7 @@ def load_para(word_index):
 
 df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
 # df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-df_test = joblib.load('valid_for_emsemble_features.pkl')
+df_test = joblib.load('valid_for_emsemble.pkl')
 df = pd.concat([df_train ,df_test],sort=True)
 
 def build_vocab(texts):
