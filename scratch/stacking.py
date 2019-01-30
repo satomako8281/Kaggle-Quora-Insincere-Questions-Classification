@@ -109,7 +109,7 @@ y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 delta, f1_score = bestThresshold(y_te, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
-df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-submission = df_test[['qid']].copy()
-submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission.csv', index=False)
+# df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+# submission = df_test[['qid']].copy()
+# submission['prediction'] = (te_preds_merged > delta).astype(int)
+# submission.to_csv('submission.csv', index=False)
