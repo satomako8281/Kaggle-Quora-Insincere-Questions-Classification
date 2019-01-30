@@ -152,7 +152,7 @@ def sigmoid(x):
 
 ########
 embed_size = 300
-embedding_path = "../input/embeddings/glove.840B.300d/glove.840B.300d.txt"
+embedding_path = "./input/embeddings/glove.840B.300d/glove.840B.300d.txt"
 def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
 embedding_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_path, encoding='utf-8', errors='ignore'))
 # all_embs = np.stack(embedding_index.values())
@@ -166,7 +166,7 @@ for word, i in word_index.items():
     embedding_vector = embedding_index.get(word)
     if embedding_vector is not None: embedding_matrix[i] = embedding_vector
 
-embedding_path = "../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt"
+embedding_path = "./input/embeddings/paragram_300_sl999/paragram_300_sl999.txt"
 def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
 embedding_index = dict(get_coefs(*o.split(" ")) for o in open(embedding_path, encoding='utf-8', errors='ignore') if len(o)>100)
 # all_embs = np.stack(embedding_index.values())
