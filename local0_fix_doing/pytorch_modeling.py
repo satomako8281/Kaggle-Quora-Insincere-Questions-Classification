@@ -140,7 +140,7 @@ lb_test["question_text"] = lb_test["question_text"].apply(lambda x: replace_typi
 
 max_features = 120000
 tk = Tokenizer(lower = True, filters='', num_words=max_features)
-full_text = list(train['question_text'].values) + list(test['question_text'].values) + + list(lb_test['question_text'].values)
+full_text = list(train['question_text'].values) + list(test['question_text'].values) + list(lb_test['question_text'].values)
 tk.fit_on_texts(full_text)
 
 train_tokenized = tk.texts_to_sequences(train['question_text'].fillna('missing'))
