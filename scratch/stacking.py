@@ -83,7 +83,7 @@ import xgboost as xgb
 est = xgb.XGBClassifier(
     #learning_rate = 0.02,
  n_estimators= 2000,
- max_depth= 4,
+ max_depth= 3,
  min_child_weight= 2,
  #gamma=1,
  gamma=0.9,
