@@ -362,7 +362,7 @@ seed_everything()
 
 
 train_preds = np.zeros(len(train))
-test_preds = np.zeros((len(test), 1))
+test_preds = np.zeros((len(test)))
 # test_preds_local = np.zeros((n_test, len(splits)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
@@ -390,14 +390,14 @@ valid_preds_fold, test_preds_fold = train_model(
 )
 
 train_preds[valid_idx] = valid_preds_fold
-test_preds[:, 1] = test_preds_fold
+test_preds += test_preds_fold / 1
 # test_preds_local[:, i] = test_preds_local_fold
 joblib.dump(valid_preds_fold, 'valid_pred_pytorch.pkl', compress=3)
-joblib.dump(test_preds_fold, 'test_pred_pytorch.pkl', compress=3)
+joblib.dump(test_preds, 'test_pred_pytorch.pkl', compress=3)
 
-search_result = threshold_search(test_preds_fold, valid_preds_fold)
-sub['prediction'] = test_preds.mean(1) > search_result['threshold']
-sub.to_csv("submission.csv", index=False)
+search_result = threshold_search(y_train[valid_idx.astype(int)], valid_preds_fold)
+# sub['prediction'] = test_preds.mean(1) > search_result['threshold']
+# sub.to_csv("submission.csv", index=False)
 
 # del df, df_test, df_train, embedding_matrix, features, mispellings_re, test_features
 # del test_preds, train_idx, train_preds, valid_idx, vocab, word_index, x_test, x_train
