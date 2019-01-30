@@ -191,7 +191,7 @@ def clean_special_chars(text, punct, mapping):
         text = text.replace(p, mapping[p])
 
     for p in punct:
-        text = text.replace(p, f' {p} ')
+        text = text.replace(p, ' {} '.format(p))
 
     specials = {'\u200b': ' ', '…': ' ... ', '\ufeff': '', 'करना': '',
                 'है': ''}  # Other special characters that I have to deal with in last
@@ -207,7 +207,7 @@ def add_lower(embedding, vocab):
         if word in embedding and word.lower() not in embedding:
             embedding[word.lower()] = embedding[word]
             count += 1
-    print(f"Added {count} words to embedding")
+    print("Added {} words to embedding".format(count))
 
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*',
@@ -225,7 +225,7 @@ puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', 
 def clean_text(x):
     x = str(x)
     for punct in puncts:
-        x = x.replace(punct, f' {punct} ')
+        x = x.replace(punct, ' {} '.format(punct))
     return x
 
 

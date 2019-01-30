@@ -47,7 +47,7 @@ puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', 
 def clean_text(x):
     x = str(x)
     for punct in puncts:
-        x = x.replace(punct, f' {punct} ')
+        x = x.replace(punct, ' {} '.format(punct))
     return x
 
 def clean_numbers(x):
