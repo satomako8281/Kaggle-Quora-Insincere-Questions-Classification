@@ -7,6 +7,24 @@ from sklearn.metrics import f1_score
 
 INPUT_PATH = './input'
 
+def setup_custom_logger(name):
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    filepath = os.path.dirname(os.path.join('./output', 'log'))
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
+    handler = logging.FileHandler(os.path.join(filepath, 'log-{os.getpid()}.txt'), mode='w')
+    handler.setFormatter(formatter)
+    screen_handler = logging.StreamHandler(stream=sys.stdout)
+    screen_handler.setFormatter(formatter)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    logger.addHandler(screen_handler)
+    return logger
+
+
+logger = setup_custom_logger('quora')
 
 def bestThresshold(y_train, train_preds):
     tmp = [0, 0, 0]  # idx, cur, max
@@ -23,6 +41,11 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
         est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
                     positive=True, random_state=9999, selection='random')
     est.fit(X_tr, y_tr)
+    if hasattr(est, 'intercept_') and verbose:
+        logger.info('merge_predictions = \n{:+.4f}\n{}'.format(
+            est.intercept_,
+            '\n'.join('{:+.4f} * {}'.format(coef, i) for i, coef in
+                      zip(range(X_tr.shape[0]), est.coef_))))
     # if hasattr(est, 'intercept_') and verbose:
     return (est.predict(X_tr),
             est.predict(X_te) if X_te is not None else None)
@@ -32,11 +55,11 @@ te_preds = []
 va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_bilstm.pkl")[:, np.newaxis])
-# va_preds.append(joblib.load("valid_pred_pytorch.pkl")[:, np.newaxis])
+va_preds.append(joblib.load("valid_pred_pytorch.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_bilstm.pkl")[:, np.newaxis])
-# te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
+te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
 va_preds = np.hstack(va_preds)
 te_preds = np.hstack(te_preds)
 y_va = joblib.load("./input/y_va.pkl")
