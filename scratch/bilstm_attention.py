@@ -366,12 +366,12 @@ def load_and_prec():
     #     x_test_f, features_t = zip(*x_test_f)
 
     # shuffling the data
-    np.random.seed(SEED)
-    trn_idx = np.random.permutation(len(train_X))
-
-    train_X = train_X[trn_idx]
-    train_y = train_y[trn_idx]
-    features = features[trn_idx]
+    # np.random.seed(SEED)
+    # trn_idx = np.random.permutation(len(train_X))
+    #
+    # train_X = train_X[trn_idx]
+    # train_y = train_y[trn_idx]
+    # features = features[trn_idx]
 
     return train_X, test_X, train_y, features, test_features, tokenizer.word_index
 #     return train_X, test_X, train_y, x_test_f,y_test_f,features, test_features, features_t, tokenizer.word_index
@@ -384,13 +384,13 @@ seed_everything()
 
 # fasttext_embeddings = load_fasttext(word_index)
 
-glove_embeddings = load_glove(word_index)
-paragram_embeddings = load_para(word_index)
-embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
-joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
-del glove_embeddings, paragram_embeddings
+# glove_embeddings = load_glove(word_index)
+# paragram_embeddings = load_para(word_index)
+# embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
+# joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
+# del glove_embeddings, paragram_embeddings
 
-# embedding_matrix = joblib.load('embedding_matrix.pkl')
+embedding_matrix = joblib.load('embedding_matrix.pkl')
 
 # vocab = build_vocab(df['question_text'])
 # add_lower(embedding_matrix, vocab)
@@ -775,9 +775,9 @@ test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=F
 avg_losses_f = []
 avg_val_losses_f = []
 
-x_train = np.array(x_train)
-y_train = np.array(y_train)
-features = np.array(features)
+# x_train = np.array(x_train)
+# y_train = np.array(y_train)
+# features = np.array(features)
 
 x_train_fold = torch.tensor(x_train[train_idx.astype(int)], dtype=torch.long).cuda()
 y_train_fold = torch.tensor(y_train[train_idx.astype(int), np.newaxis], dtype=torch.float32).cuda()
@@ -787,17 +787,9 @@ kfold_X_valid_features = features[valid_idx.astype(int)]
 x_val_fold = torch.tensor(x_train[valid_idx.astype(int)], dtype=torch.long).cuda()
 y_val_fold = torch.tensor(y_train[valid_idx.astype(int), np.newaxis], dtype=torch.float32).cuda()
 
-#     model = BiLSTM(lstm_layer=2,hidden_dim=40,dropout=DROPOUT).cuda()
 model = NeuralNet()
-
-# make sure everything in the model is running on the GPU
 model.cuda()
-
-# define binary cross entropy loss
-# note that the model returns logit to take advantage of the log-sum-exp trick
-# for numerical stability in the loss
 loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
-
 step_size = 300
 base_lr, max_lr = 0.001, 0.003
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
@@ -837,32 +829,16 @@ for epoch in range(n_epochs):
 
         if scheduler:
             scheduler.batch_step()
-        ################################################################################################
-
-
-        # Compute and print loss.
         loss = loss_fn(y_pred, y_batch)
-
-        # Before the backward pass, use the optimizer object to zero all of the
-        # gradients for the Tensors it will update (which are the learnable weights
-        # of the model)
         optimizer.zero_grad()
-
-        # Backward pass: compute gradient of the loss with respect to model parameters
         loss.backward()
-
-        # Calling the step function on an Optimizer makes an update to its parameters
         optimizer.step()
         avg_loss += loss.item() / len(train_loader)
 
-    # set evaluation mode of the model. This disabled operations which are only applied during training like dropout
     model.eval()
-
-    # predict all the samples in y_val_fold batch per batch
     # valid_preds_fold = np.zeros((x_val_fold.size(0)))
     valid_preds_fold = np.zeros((len(valid_idx)))
     test_preds_fold = np.zeros((len(df_test)))
-
     avg_val_loss = 0.
     for i, (x_batch, y_batch, index) in enumerate(valid_loader):
         f = kfold_X_valid_features[index]
@@ -890,6 +866,7 @@ joblib.dump(valid_preds_fold, 'valid_pred_bilstm.pkl', compress=3)
 joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
 
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
+print(valid_preds_fold.shape)
 delta = bestThresshold(y_train[valid_idx.astype(int)],valid_preds_fold)
 
 # del X_test, X_train, df, df_test, df_train, features, full_text, mispellings_re, sub, test, test_features, test_tokenized
