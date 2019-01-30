@@ -83,8 +83,8 @@ import xgboost as xgb
 est = xgb.XGBClassifier(
     #learning_rate = 0.02,
  n_estimators= 2000,
- max_depth= 3,
- min_child_weight= 5,
+ max_depth= 4,
+ min_child_weight= 2,
  #gamma=1,
  gamma=0.9,
  subsample=0.8,
@@ -100,7 +100,7 @@ y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds,
-    est=est
+    # est=est
 )
 delta, f_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
