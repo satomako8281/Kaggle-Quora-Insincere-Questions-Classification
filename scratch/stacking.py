@@ -32,7 +32,7 @@ def bestThresshold(y_train, train_preds):
     tmp = [0, 0, 0]  # idx, cur, max
     delta = 0
     for tmp[0] in np.arange(0.01, 0.8, 0.01):
-        tmp[1] = f1_score(y_train.astype(np.int32), (np.array(train_preds) > tmp[0]).astype(np.int32))
+        tmp[1] = f1_score(y_train.astype(np.int32), (train_preds > tmp[0]).astype(np.int32))
         if tmp[1] > tmp[2]:
             delta = tmp[0]
             tmp[2] = tmp[1]
