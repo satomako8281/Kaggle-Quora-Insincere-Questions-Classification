@@ -362,7 +362,7 @@ seed_everything()
 
 
 train_preds = np.zeros(len(train))
-test_preds = np.zeros((len(test), len(splits)))
+test_preds = np.zeros((len(test), 1))
 # test_preds_local = np.zeros((n_test, len(splits)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
