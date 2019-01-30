@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore", message="F-score is ill-defined and being set 
 import re
 
 n_epochs = 5
+embed_size = 300
 
 INPUT_PATH = './input'
 splits = 1
