@@ -23,6 +23,7 @@ import warnings
 warnings.filterwarnings("ignore", message="F-score is ill-defined and being set to 0.0 due to no predicted samples.")
 import re
 
+n_epochs = 5
 
 INPUT_PATH = './input'
 splits = 1
@@ -161,7 +162,6 @@ def sigmoid(x):
 embedding_matrix = joblib.load('embedding_matrix.pkl')
 train_idx = joblib.load('train_idx.pkl')
 valid_idx = joblib.load('valid_idx.pkl')
-
 class Attention(nn.Module):
     def __init__(self, feature_dim, step_dim, bias=True, **kwargs):
         super(Attention, self).__init__(**kwargs)
@@ -202,9 +202,6 @@ class Attention(nn.Module):
 
         weighted_input = x * torch.unsqueeze(a, -1)
         return torch.sum(weighted_input, 1)
-
-n_epochs = 5
-embed_size = 300
 
 class NeuralNet(nn.Module):
     def __init__(self):
@@ -247,6 +244,7 @@ class NeuralNet(nn.Module):
         out = self.out(conc)
 
         return out
+
 
 x_test_cuda = torch.tensor(X_test, dtype=torch.long).cuda()
 test = torch.utils.data.TensorDataset(x_test_cuda)
