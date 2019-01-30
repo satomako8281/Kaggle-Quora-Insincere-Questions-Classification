@@ -23,7 +23,7 @@ import warnings
 warnings.filterwarnings("ignore", message="F-score is ill-defined and being set to 0.0 due to no predicted samples.")
 import re
 
-n_epochs = 5
+n_epochs = 3
 embed_size = 300
 
 INPUT_PATH = './input'
