@@ -370,7 +370,6 @@ valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-seed_everything(seed + i)
 model = NeuralNet()
 model.cuda()
 
