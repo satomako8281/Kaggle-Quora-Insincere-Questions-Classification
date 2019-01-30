@@ -51,11 +51,10 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
     # if hasattr(est, 'intercept_') and verbose:
 
     # Feature Importance
-    fti = est.feature_importances_
-
-    print('Feature Importances:')
-    for i, feat in enumerate(range(4)):
-        print('\t{} : {:>.6f}'.format(feat, fti[i]))
+    # fti = est.feature_importances_
+    # print('Feature Importances:')
+    # for i, feat in enumerate(range(4)):
+    #     print('\t{} : {:>.6f}'.format(feat, fti[i]))
 
 
     return (est.predict(X_tr),
