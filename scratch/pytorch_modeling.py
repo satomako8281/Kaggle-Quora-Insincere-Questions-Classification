@@ -351,6 +351,9 @@ test_preds = np.zeros((len(test)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 
+from sklearn.model_selection import StratifiedKFold
+splits = list(StratifiedKFold(n_splits=4, shuffle=True, random_state=10).split(X_train, y_train))
+(train_idx, valid_idx) = splits[0]
 x_train_fold = torch.tensor(X_train[train_idx], dtype=torch.long).cuda()
 y_train_fold = torch.tensor(y_train[train_idx, np.newaxis], dtype=torch.float32).cuda()
 x_val_fold = torch.tensor(X_train[valid_idx], dtype=torch.long).cuda()
