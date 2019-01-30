@@ -63,14 +63,16 @@ def threshold_search(y_true, y_proba):
 
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
-    sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
-    train, valid = train_test_split(
+    train, test = train_test_split(
         train, test_size=0.05, random_state=SEED, stratify=train['target']
     )
-    joblib.dump(valid, 'valid_for_emsemble.pkl', compress=3)
-    del valid
 
+    joblib.dump(test['target'], 'valid_for_emsemble_lable.pkl', compress=3)
+    joblib.dump(test['question_text'], 'valid_for_emsemble_features.pkl', compress=3)
+    test = test['question_text']
+    # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
+
+    sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values
 
 with timer("getting ngram tfidf"):

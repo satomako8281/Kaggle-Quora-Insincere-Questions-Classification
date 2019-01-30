@@ -29,7 +29,8 @@ embed_size = 300
 INPUT_PATH = './input'
 
 train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+# test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+test = joblib.load('valid_for_emsemble_features.pkl')
 sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
@@ -415,6 +416,7 @@ joblib.dump(valid_preds_fold, 'valid_pred_pytorch.pkl', compress=3)
 joblib.dump(test_preds, 'test_pred_pytorch.pkl', compress=3)
 
 search_result = threshold_search(y_train[valid_idx.astype(int)], valid_preds_fold)
+print(search_result)
 # sub['prediction'] = test_preds.mean(1) > search_result['threshold']
 # sub.to_csv("submission.csv", index=False)
 

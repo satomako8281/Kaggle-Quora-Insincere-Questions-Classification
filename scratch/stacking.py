@@ -101,10 +101,14 @@ est = RandomForestClassifier()
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds,
-    est=est
+    # est=est
 )
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
-print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
+print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
+
+y_test = joblib.load('valid_for_emsemble_label.pkl')
+delta, f1_score = bestThresshold(y_test, te_preds_merged)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
 df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 submission = df_test[['qid']].copy()
