@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.externals import joblib
 from sklearn.linear_model import Lasso
+from sklearn.metrics import f1_score
 
 def bestThresshold(y_train, train_preds):
     tmp = [0, 0, 0]  # idx, cur, max
