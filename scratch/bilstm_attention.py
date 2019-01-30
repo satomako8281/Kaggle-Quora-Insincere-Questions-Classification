@@ -381,12 +381,11 @@ x_train, x_test, y_train, features, test_features, word_index = load_and_prec()
 # missing entries in the embedding are set using np.random.normal so we have to seed here too
 seed_everything()
 
-glove_embeddings = load_glove(word_index)
-paragram_embeddings = load_para(word_index)
 # fasttext_embeddings = load_fasttext(word_index)
 
 # embedding_matrix = np.mean([glove_embeddings, paragram_embeddings, fasttext_embeddings], axis=0)
-
+# glove_embeddings = load_glove(word_index)
+# paragram_embeddings = load_para(word_index)
 # embedding_matrix = np.mean([glove_embeddings, paragram_embeddings], axis=0)
 # joblib.dump(embedding_matrix, 'embedding_matrix.pkl', compress=3)
 # del glove_embeddings, paragram_embeddings
