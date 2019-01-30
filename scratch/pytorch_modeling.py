@@ -152,8 +152,8 @@ tk.fit_on_texts(full_text)
 train_tokenized = tk.texts_to_sequences(train['question_text'].fillna('missing'))
 test_tokenized = tk.texts_to_sequences(test['question_text'].fillna('missing'))
 
-max_len = 72
-maxlen = 72
+max_len = 70
+maxlen = 70
 X_train = pad_sequences(train_tokenized, maxlen = max_len)
 X_test = pad_sequences(test_tokenized, maxlen = max_len)
 y_train = train['target'].values
@@ -256,10 +256,8 @@ test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=F
 def train_model(model, x_train, y_train, x_val, y_val, validate=True):
     optimizer = torch.optim.Adam(model.parameters())
 
-    step_size = 300
-#     scheduler = CyclicLR(optimizer, base_lr=0.001, max_lr=0.003,
-#                          step_size=step_size, mode='exp_range',
-#                          gamma=0.99994)
+    # scheduler = CosineAnnealingLR(optimizer, T_max=5)
+    # scheduler = StepLR(optimizer, step_size=3, gamma=0.1)
 
     train = torch.utils.data.TensorDataset(x_train, y_train)
     valid = torch.utils.data.TensorDataset(x_val, y_val)
@@ -277,7 +275,7 @@ def train_model(model, x_train, y_train, x_val, y_val, validate=True):
 
         for x_batch, y_batch in tqdm(train_loader, disable=True):
             y_pred = model(x_batch)
-            # scheduler.batch_step()
+
 
             loss = loss_fn(y_pred, y_batch)
 
@@ -327,16 +325,11 @@ def train_model(model, x_train, y_train, x_val, y_val, validate=True):
         y_pred = model(x_batch).detach()
 
         test_preds[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
-
-
-    # test_preds_local = np.zeros((len(test_local_loader.dataset)))
-
-#     for i, (x_batch,) in enumerate(test_local_loader):
-#         y_pred = model(x_batch).detach()
-
-#         test_preds_local[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+    # scheduler.step()
 
     return valid_preds, test_preds#, test_preds_local
+
+
 
 seed=1029
 
@@ -377,6 +370,7 @@ valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
+seed_everything(seed + i)
 model = NeuralNet()
 model.cuda()
 
@@ -385,7 +379,8 @@ valid_preds_fold, test_preds_fold = train_model(
     x_train_fold,
     y_train_fold,
     x_val_fold,
-    y_val_fold, validate=True
+    y_val_fold,
+    validate=True
 )
 
 train_preds[valid_idx] = valid_preds_fold
