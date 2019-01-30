@@ -7,15 +7,11 @@ import gc
 import os
 import re
 import torch
-from torchtext import data
-import spacy
 from tqdm import tqdm_notebook, tnrange
 from tqdm.auto import tqdm
 
 tqdm.pandas(desc='Progress')
 from collections import Counter
-from textblob import TextBlob
-from nltk import word_tokenize
 
 import torch.nn as nn
 import torch.optim as optim
