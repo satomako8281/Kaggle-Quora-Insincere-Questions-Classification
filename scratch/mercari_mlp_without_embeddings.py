@@ -233,5 +233,5 @@ for thresh in thresholds:
 joblib.dump(y_pred[:train_count][dev_ids], 'valid_pred_mercari.pkl', compress=3)
 joblib.dump(y_pred[train_count:], 'test_pred_mercari.pkl', compress=3)
 
-del dev_ids, df_test, mispellings_re, test_qids, train_ids, wft, y_pred
-gc.collect()
+# del dev_ids, df_test, mispellings_re, test_qids, train_ids, wft, y_pred
+# gc.collect()
