@@ -54,12 +54,12 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
 
 va_preds = []
 te_preds = []
-va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
-va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
+# va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
+# va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_bilstm.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_pytorch.pkl")[:, np.newaxis])
-te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
-te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
+# te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
+# te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_bilstm.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
 va_preds = np.hstack(va_preds)
@@ -68,10 +68,10 @@ y_va = joblib.load("y_val.pkl")
 print(va_preds.shape)
 print(te_preds.shape)
 
-from lightgbm import LGBMRegressor
-lgbm = LGBMRegressor(
-    max_depth=10, learning_rate=0.0025, random_state=5
-)
+# from lightgbm import LGBMRegressor
+# lgbm = LGBMRegressor(
+#     max_depth=10, learning_rate=0.0025, random_state=5
+# )
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds, est=lgbm)
