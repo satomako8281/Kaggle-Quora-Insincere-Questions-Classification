@@ -111,9 +111,9 @@ def load_para(word_index):
     return embedding_matrix
 
 # df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+# df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 df_train = joblib.load('train.pkl')
-df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-# df_test = joblib.load('valid_for_emsemble.pkl')
+df_test = joblib.load('valid_for_emsemble.pkl')
 df = pd.concat([df_train, df_test], sort=True)
 
 def build_vocab(texts):
@@ -161,6 +161,7 @@ def correct_spelling(x, dic):
     for word in dic.keys():
         x = x.replace(word, dic[word])
     return x
+
 
 def unknown_punct(embed, punct):
     unknown = ''
@@ -306,9 +307,9 @@ def add_features(df):
 
 def load_and_prec():
     train_df = joblib.load('train.pkl')
-    # test_df = joblib.load('valid_for_emsemble.pkl')
+    test_df = joblib.load('valid_for_emsemble.pkl')
     # train_df = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+    # test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 
