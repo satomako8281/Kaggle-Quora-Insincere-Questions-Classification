@@ -66,10 +66,11 @@ with timer("reading_data"):
     train, test = train_test_split(
         train, test_size=0.05, random_state=SEED, stratify=train['target']
     )
+    # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
+    joblib.dump(train, 'train.pkl', compress=3)
     joblib.dump(test, 'valid_for_emsemble.pkl', compress=3)
     joblib.dump(test['target'], 'valid_for_emsemble_label.pkl', compress=3)
-    # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
     sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values

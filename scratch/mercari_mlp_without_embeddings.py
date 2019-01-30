@@ -182,8 +182,9 @@ vectorizer = make_union(
     )
 
 with timer('process train'):
-    df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+    # df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     # df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+    df_train = joblib.load('train.pkl')
     df_test = joblib.load('valid_for_emsemble.pkl')
     train_count= len(df_train)
     test_count= len(df_test)
