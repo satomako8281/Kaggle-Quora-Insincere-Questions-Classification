@@ -18,13 +18,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
         est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
                     positive=True, random_state=9999, selection='random')
     est.fit(X_tr, y_tr)
-    if hasattr(est, 'intercept_') and verbose:
-        print('merge_predictions = \n{:+.4f}\n{}'.format(
-            est.intercept_,
-            '\n'.join(
-                '{:+.4f} * {}'.format(coef, i) for i, coef in zip(range(X_tr.shape[0]), est.coef_)
-            )
-        ))
+    # if hasattr(est, 'intercept_') and verbose:
     return (est.predict(X_tr),
             est.predict(X_te) if X_te is not None else None)
 
