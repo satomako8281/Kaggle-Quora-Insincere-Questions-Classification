@@ -19,7 +19,6 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.autograd import Variable
-from torchtext.data import Example
 from sklearn.metrics import f1_score
 import os
 
