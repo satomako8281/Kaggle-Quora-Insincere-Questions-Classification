@@ -114,7 +114,7 @@ def load_para(word_index):
 # df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 df_train = joblib.load('train.pkl')
 df_test = joblib.load('valid_for_emsemble.pkl')
-df = pd.concat([df_train ,df_test],sort=True)
+df = pd.concat([df_train, df_test], sort=True)
 
 def build_vocab(texts):
     sentences = texts.apply(lambda x: x.split()).values
@@ -859,7 +859,8 @@ for epoch in range(n_epochs):
     model.eval()
 
     # predict all the samples in y_val_fold batch per batch
-    valid_preds_fold = np.zeros((x_val_fold.size(0)))
+    # valid_preds_fold = np.zeros((x_val_fold.size(0)))
+    valid_preds_fold = np.zeros((len(valid_idx)))
     test_preds_fold = np.zeros((len(df_test)))
 
     avg_val_loss = 0.
