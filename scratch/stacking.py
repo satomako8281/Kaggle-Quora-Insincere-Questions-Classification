@@ -67,7 +67,12 @@ te_preds = np.hstack(te_preds)
 y_va = joblib.load("y_val.pkl")
 print(va_preds.shape)
 print(te_preds.shape)
-va_preds_merged, te_preds_merged = merge_predictions(X_tr=va_preds, y_tr=y_va, X_te=te_preds)
+
+from lightgbm import LGBMClassifier
+lgbm = LGBMClassifier(objective='multiclass', random_state=5)
+
+va_preds_merged, te_preds_merged = merge_predictions(
+    X_tr=va_preds, y_tr=y_va, X_te=te_preds, est=lgbm)
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 

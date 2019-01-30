@@ -21,9 +21,9 @@ def decode(code, sbase, size):
     return bin_str
 
 
-df = pd.read_csv('input/submission1.csv')
+df = pd.read_csv('./quora/submission.csv')
 mojiretu = ''
-for x in df['6'].values.tolist():
+for x in df['prediction'].values.tolist():
     mojiretu += str(x)
 print(mojiretu)
 
