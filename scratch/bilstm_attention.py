@@ -889,7 +889,7 @@ joblib.dump(valid_preds_fold, 'valid_pred_bilstm.pkl', compress=3)
 joblib.dump(test_preds_fold, 'test_pred_bilstm.pkl', compress=3)
 
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
-delta = bestThresshold(valid_preds_fold, train_preds_fold)
+delta = bestThresshold(valid_preds_fold, valid_preds_fold)
 
 del X_test, X_train, df, df_test, df_train, features, full_text, mispellings_re, sub, test, test_features, test_tokenized
 del train, train_tokenized, vocab, word_index, x_test, x_train, y_train

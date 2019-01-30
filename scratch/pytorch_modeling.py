@@ -395,7 +395,7 @@ test_preds[:, 1] = test_preds_fold
 joblib.dump(valid_preds_fold, 'valid_pred_pytorch.pkl', compress=3)
 joblib.dump(test_preds_fold, 'test_pred_pytorch.pkl', compress=3)
 
-search_result = threshold_search(y_train, train_preds)
+search_result = threshold_search(test_preds_fold, valid_preds_fold)
 sub['prediction'] = test_preds.mean(1) > search_result['threshold']
 sub.to_csv("submission.csv", index=False)
 
