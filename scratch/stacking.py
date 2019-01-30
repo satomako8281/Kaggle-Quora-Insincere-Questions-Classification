@@ -105,7 +105,7 @@ va_preds_merged, te_preds_merged = merge_predictions(
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
-y_test = joblib.load('valid_for_emsemble_lable.pkl').values
+y_test = joblib.load('valid_for_emsemble_lable.pkl').values[:, np.newaxis]
 delta, f1_score = bestThresshold(y_test, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
