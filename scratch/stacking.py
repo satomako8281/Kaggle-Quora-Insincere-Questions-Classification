@@ -93,14 +93,14 @@ est = xgb.XGBClassifier(
  nthread= -1,
  scale_pos_weight=1)
 
-# from sklearn.ensemble import RandomForestClassifier
-# est = RandomForestClassifier()
+from sklearn.ensemble import RandomForestClassifier
+est = RandomForestClassifier()
 
 y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds,
-    # est=est
+    est=est
 )
 delta, f_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
