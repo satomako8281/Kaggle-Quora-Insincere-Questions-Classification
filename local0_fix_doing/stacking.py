@@ -108,7 +108,7 @@ est = xgb.XGBClassifier(
 from sklearn.ensemble import RandomForestClassifier
 est = RandomForestClassifier()
 
-y_te = joblib.load('valid_for_emsemble_lable.pkl').values
+y_te = joblib.load('valid_for_emsemble_label.pkl').values
 
 va_preds_merged, te_preds_merged, lb_te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds, X_lb_te=lb_te_preds
