@@ -158,7 +158,7 @@ y_train = train['target'].values
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-embedding_matrix = joblib.load(embedding_matrix)
+embedding_matrix = joblib.load('embedding_matrix.pkl')
 train_idx = joblib.load('train_idx.pkl')
 valid_idx = joblib.load('valid_idx.pkl')
 
