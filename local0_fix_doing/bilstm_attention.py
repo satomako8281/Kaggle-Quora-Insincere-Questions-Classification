@@ -111,10 +111,10 @@ def load_para(word_index):
     return embedding_matrix
 
 # df_train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-# df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 df_train = joblib.load('train.pkl')
 df_test = joblib.load('valid_for_emsemble.pkl')
-df = pd.concat([df_train, df_test], sort=True)
+df_lb_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+df = pd.concat([df_train, df_test, df_lb_test], sort=True)
 
 def build_vocab(texts):
     sentences = texts.apply(lambda x: x.split()).values
@@ -309,21 +309,24 @@ def load_and_prec():
     train_df = joblib.load('train.pkl')
     test_df = joblib.load('valid_for_emsemble.pkl')
     # train_df = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    # test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+    lb_test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 
     # lower
     train_df["question_text"] = train_df["question_text"].apply(lambda x: x.lower())
     test_df["question_text"] = test_df["question_text"].apply(lambda x: x.lower())
+    lb_test_df["question_text"] = lb_test_df["question_text"].apply(lambda x: x.lower())
 
     # Clean the text
     train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: clean_text(x))
     test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_text(x))
+    lb_test_df["question_text"] = lb_test_df["question_text"].apply(lambda x: clean_text(x))
 
     # Clean numbers
     train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: clean_numbers(x))
     test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_numbers(x))
+    lb_test_df["question_text"] = lb_test_df["question_text"].apply(lambda x: clean_numbers(x))
 
     # Clean speelings
     # train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: replace_typical_misspell(x))
@@ -332,19 +335,23 @@ def load_and_prec():
     ## fill up the missing values
     train_X = train_df["question_text"].fillna("_##_").values
     test_X = test_df["question_text"].fillna("_##_").values
+    lb_test_X = lb_test_df["question_text"].fillna("_##_").values
 
     ###################### Add Features ###############################
     #  https://github.com/wongchunghang/toxic-comment-challenge-lstm/blob/master/toxic_comment_9872_model.ipynb
     train = add_features(train_df)
     test = add_features(test_df)
+    lb_test = add_features(lb_test_df)
 
     features = train[['caps_vs_length', 'words_vs_unique']].fillna(0)
     test_features = test[['caps_vs_length', 'words_vs_unique']].fillna(0)
+    lb_test_features = lb_test[['caps_vs_length', 'words_vs_unique']].fillna(0)
 
     ss = StandardScaler()
-    ss.fit(np.vstack((features, test_features)))
+    ss.fit(np.vstack((features, test_features, lb_test_features)))
     features = ss.transform(features)
     test_features = ss.transform(test_features)
+    lb_test_features = ss.transform(lb_test_features)
     ###########################################################################
 
     ## Tokenize the sentences
@@ -352,10 +359,12 @@ def load_and_prec():
     tokenizer.fit_on_texts(list(train_X))
     train_X = tokenizer.texts_to_sequences(train_X)
     test_X = tokenizer.texts_to_sequences(test_X)
+    lb_test_X = tokenizer.texts_to_sequences(lb_test_X)
 
     ## Pad the sentences
     train_X = pad_sequences(train_X, maxlen=maxlen)
     test_X = pad_sequences(test_X, maxlen=maxlen)
+    lb_test_X = pad_sequences(lb_test_X, maxlen=maxlen)
 
     ## Get the target values
     train_y = train_df['target'].values
@@ -373,11 +382,11 @@ def load_and_prec():
     # train_y = train_y[trn_idx]
     # features = features[trn_idx]
 
-    return train_X, test_X, train_y, features, test_features, tokenizer.word_index
+    return train_X, test_X, lb_test_X, train_y, features, test_features, tokenizer.word_index
 #     return train_X, test_X, train_y, x_test_f,y_test_f,features, test_features, features_t, tokenizer.word_index
 #     return train_X, test_X, train_y, tokenizer.word_index
 
-x_train, x_test, y_train, features, test_features, word_index = load_and_prec()
+x_train, x_test, x_lb_test, y_train, features, test_features, word_index = load_and_prec()
 
 # missing entries in the embedding are set using np.random.normal so we have to seed here too
 seed_everything()
@@ -759,6 +768,7 @@ def sigmoid(x):
 train_preds = np.zeros((len(x_train)))
 # matrix for the predictions on the test set
 test_preds = np.zeros((len(df_test)))
+lb_test_preds = np.zeros((len(df_lb_test)))
 
 # always call this before training for deterministic results
 seed_everything()
@@ -771,6 +781,10 @@ seed_everything()
 x_test_cuda = torch.tensor(x_test, dtype=torch.long).cuda()
 test = torch.utils.data.TensorDataset(x_test_cuda)
 test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=False)
+
+x_lb_test_cuda = torch.tensor(x_lb_test, dtype=torch.long).cuda()
+lb_test = torch.utils.data.TensorDataset(x_lb_test_cuda)
+lb_test_loader = torch.utils.data.DataLoader(lb_test, batch_size=batch_size, shuffle=False)
 
 avg_losses_f = []
 avg_val_losses_f = []
@@ -839,6 +853,7 @@ for epoch in range(n_epochs):
     # valid_preds_fold = np.zeros((x_val_fold.size(0)))
     valid_preds_fold = np.zeros((len(valid_idx)))
     test_preds_fold = np.zeros((len(df_test)))
+    lb_test_preds_fold = np.zeros((len(df_lb_test)))
     avg_val_loss = 0.
     for i, (x_batch, y_batch, index) in enumerate(valid_loader):
         f = kfold_X_valid_features[index]
@@ -859,11 +874,19 @@ for i, (x_batch,) in enumerate(test_loader):
 
     test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
+for i, (x_batch,) in enumerate(lb_test_loader):
+    f = test_features[i * batch_size:(i+1) * batch_size]
+    y_pred = model([x_batch,f]).detach()
+
+    lb_test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+
 train_preds[valid_idx] = valid_preds_fold
 test_preds += test_preds_fold / 1
+lb_test_preds += lb_test_preds_fold / 1
 
 joblib.dump(valid_preds_fold, 'valid_pred_bilstm.pkl', compress=3)
 joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
+joblib.dump(lb_test_preds, 'lb_test_pred_bilstm.pkl', compress=3)
 
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
 print(valid_preds_fold.shape)

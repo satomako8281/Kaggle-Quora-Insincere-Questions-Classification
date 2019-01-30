@@ -29,9 +29,9 @@ embed_size = 300
 INPUT_PATH = './input'
 
 # train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-# test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 train = joblib.load('train.pkl')
 test = joblib.load('valid_for_emsemble.pkl')
+lb_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
@@ -126,14 +126,17 @@ def replace_typical_misspell(text):
 # Clean the text
 train["question_text"] = train["question_text"].apply(lambda x: clean_text(x.lower()))
 test["question_text"] = test["question_text"].apply(lambda x: clean_text(x.lower()))
+lb_test["question_text"] = lb_test["question_text"].apply(lambda x: clean_text(x.lower()))
 
 # Clean numbers
 train["question_text"] = train["question_text"].apply(lambda x: clean_numbers(x))
 test["question_text"] = test["question_text"].apply(lambda x: clean_numbers(x))
+lb_test["question_text"] = lb_test["question_text"].apply(lambda x: clean_numbers(x))
 
 # Clean speelings
 train["question_text"] = train["question_text"].apply(lambda x: replace_typical_misspell(x))
 test["question_text"] = test["question_text"].apply(lambda x: replace_typical_misspell(x))
+lb_test["question_text"] = lb_test["question_text"].apply(lambda x: replace_typical_misspell(x))
 
 max_features = 120000
 tk = Tokenizer(lower = True, filters='', num_words=max_features)
