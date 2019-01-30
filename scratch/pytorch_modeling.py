@@ -27,18 +27,10 @@ n_epochs = 5
 embed_size = 300
 
 INPUT_PATH = './input'
-splits = 1
-def seed_torch(seed=1029):
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
+
 train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
 test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
-
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
  '·', '_', '{', '}', '©', '^', '®', '`',  '<', '→', '°', '€', '™', '›',  '♥', '←', '×', '§', '″', '′', 'Â', '█', '½', 'à', '…',
@@ -49,7 +41,7 @@ puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', 
 def clean_text(x):
     x = str(x)
     for punct in puncts:
-        x = x.replace(punct, ' {} '.format(punct))
+        x = x.replace(punct, f' {punct} ')
     return x
 
 def clean_numbers(x):
@@ -129,12 +121,9 @@ def replace_typical_misspell(text):
         return mispellings[match.group(0)]
     return mispellings_re.sub(replace, text)
 
-train["question_text"] = train["question_text"].apply(lambda x: x.lower())
-test["question_text"] = test["question_text"].apply(lambda x: x.lower())
-
 # Clean the text
-train["question_text"] = train["question_text"].apply(lambda x: clean_text(x))
-test["question_text"] = test["question_text"].apply(lambda x: clean_text(x))
+train["question_text"] = train["question_text"].apply(lambda x: clean_text(x.lower()))
+test["question_text"] = test["question_text"].apply(lambda x: clean_text(x.lower()))
 
 # Clean numbers
 train["question_text"] = train["question_text"].apply(lambda x: clean_numbers(x))
@@ -152,8 +141,8 @@ tk.fit_on_texts(full_text)
 train_tokenized = tk.texts_to_sequences(train['question_text'].fillna('missing'))
 test_tokenized = tk.texts_to_sequences(test['question_text'].fillna('missing'))
 
-max_len = 70
-maxlen = 70
+max_len = 72
+maxlen = 72
 X_train = pad_sequences(train_tokenized, maxlen = max_len)
 X_test = pad_sequences(test_tokenized, maxlen = max_len)
 y_train = train['target'].values
@@ -355,7 +344,6 @@ seed_everything()
 
 train_preds = np.zeros(len(train))
 test_preds = np.zeros((len(test)))
-# test_preds_local = np.zeros((n_test, len(splits)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 
