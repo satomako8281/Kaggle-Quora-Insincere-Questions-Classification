@@ -73,8 +73,6 @@ te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
 va_preds = np.hstack(va_preds)
 te_preds = np.hstack(te_preds)
 y_va = joblib.load("y_val.pkl")
-print(va_preds.shape)
-print(te_preds.shape)
 
 # from lightgbm import LGBMRegressor
 # est = LGBMRegressor(
@@ -95,8 +93,10 @@ print(te_preds.shape)
 #  nthread= -1,
 #  scale_pos_weight=1)
 
-from sklearn.ensemble import RandomForestClassifier
-est = RandomForestClassifier()
+# from sklearn.ensemble import RandomForestClassifier
+# est = RandomForestClassifier()
+
+y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds,
@@ -105,7 +105,6 @@ va_preds_merged, te_preds_merged = merge_predictions(
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
-y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 delta, f1_score = bestThresshold(y_te, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
