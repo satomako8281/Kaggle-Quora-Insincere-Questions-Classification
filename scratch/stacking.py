@@ -46,8 +46,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
     if hasattr(est, 'intercept_') and verbose:
         logger.info('merge_predictions = \n{:+.4f}\n{}'.format(
             est.intercept_,
-            '\n'.join('{:+.4f} * {}'.format(coef) for coef in
-                      est.coef_)))
+            '\n'.join('{:+.4f}'.format(coef) for coef in est.coef_)))
     # if hasattr(est, 'intercept_') and verbose:
     return (est.predict(X_tr),
             est.predict(X_te) if X_te is not None else None)
