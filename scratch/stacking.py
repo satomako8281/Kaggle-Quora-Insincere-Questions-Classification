@@ -73,8 +73,24 @@ print(te_preds.shape)
 #     max_depth=10, learning_rate=0.0025, random_state=5
 # )
 
+import xgboost as xgb
+gbm = xgb.XGBClassifier(
+    #learning_rate = 0.02,
+ n_estimators= 2000,
+ max_depth= 4,
+ min_child_weight= 2,
+ #gamma=1,
+ gamma=0.9,
+ subsample=0.8,
+ colsample_bytree=0.8,
+ objective= 'binary:logistic',
+ nthread= -1,
+ scale_pos_weight=1)
+
 va_preds_merged, te_preds_merged = merge_predictions(
-    X_tr=va_preds, y_tr=y_va, X_te=te_preds)
+    X_tr=va_preds, y_tr=y_va, X_te=te_preds,
+    est=gbm
+)
 delta, f1_score = bestThresshold(y_va, va_preds_merged)
 print('[Model mean] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f1_score))
 
