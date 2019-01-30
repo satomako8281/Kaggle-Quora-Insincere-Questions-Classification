@@ -306,7 +306,8 @@ def add_features(df):
 
 def load_and_prec():
     train_df = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+    test_df = joblib.load('valid_for_emsemble.pkl')
+    # test_df = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 
