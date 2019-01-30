@@ -31,7 +31,6 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 from torch.optim.optimizer import Optimizer
-from unidecode import unidecode
 
 embed_size = 300 # how big is each word vector
 max_features = 120000 # how many unique words to use (i.e num rows in embedding vector)
@@ -56,7 +55,7 @@ seed_everything()
 def load_glove(word_index):
     EMBEDDING_FILE = os.path.join(INPUT_PATH ,'embeddings/glove.840B.300d/glove.840B.300d.txt')
     def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')[:300]
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE))
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8", errors='ignore'))
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean,emb_std = -0.005838499,0.48782197

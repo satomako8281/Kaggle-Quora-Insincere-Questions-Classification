@@ -110,3 +110,6 @@ joblib.dump(test_meta, 'test_pred_tfidf.pkl', compress=3)
 search_result = threshold_search(y_val, valid_pred[:, 1])
 print(search_result)
 
+import gc
+del sub, test, test_meta, train, train_idx, train_meta, valid_idx, y_train, y_val
+gc.collect()
