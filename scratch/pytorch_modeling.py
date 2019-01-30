@@ -145,6 +145,7 @@ max_len = 72
 maxlen = 72
 X_train = pad_sequences(train_tokenized, maxlen = max_len)
 X_test = pad_sequences(test_tokenized, maxlen = max_len)
+
 y_train = train['target'].values
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -152,6 +153,8 @@ def sigmoid(x):
 embedding_matrix = joblib.load('embedding_matrix.pkl')
 train_idx = joblib.load('train_idx.pkl')
 valid_idx = joblib.load('valid_idx.pkl')
+
+
 class Attention(nn.Module):
     def __init__(self, feature_dim, step_dim, bias=True, **kwargs):
         super(Attention, self).__init__(**kwargs)
@@ -332,6 +335,7 @@ def threshold_search(y_true, y_proba):
             best_score = score
     search_result = {'threshold': best_threshold, 'f1': best_score}
     return search_result
+
 def seed_everything(seed=1234):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -358,6 +362,7 @@ valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
+seed_everything(1030)
 model = NeuralNet()
 model.cuda()
 
