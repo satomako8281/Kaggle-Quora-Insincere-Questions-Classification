@@ -15,7 +15,7 @@ from sklearn.metrics import f1_score
 
 TOKENIZER = re.compile('([{}“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
 SEED = 1029
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 
 @contextmanager
