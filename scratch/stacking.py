@@ -69,7 +69,7 @@ print(va_preds.shape)
 print(te_preds.shape)
 
 from lightgbm import LGBMRegressor
-lgbm = LGBMRegressor(objective='multiclass', random_state=5)
+lgbm = LGBMRegressor(random_state=5)
 
 va_preds_merged, te_preds_merged = merge_predictions(
     X_tr=va_preds, y_tr=y_va, X_te=te_preds, est=lgbm)
