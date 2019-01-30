@@ -38,7 +38,7 @@ def bestThresshold(y_train, train_preds):
             tmp[2] = tmp[1]
     return delta, tmp[2]
 
-def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
+def merge_predictions(X_tr, y_tr, X_te=None, X_lb_te=None, est=None, verbose=True):
     if est is None:
         est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
                     positive=True, random_state=1029, selection='random')
@@ -58,10 +58,12 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
 
 
     return (est.predict(X_tr),
-            est.predict(X_te) if X_te is not None else None)
+            est.predict(X_te) if X_te is not None else None,
+            est.predict(X_lb_te) if X_lb_te is not None else None)
 
 va_preds = []
 te_preds = []
+lb_te_preds = []
 va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_bilstm.pkl")[:, np.newaxis])
@@ -70,8 +72,13 @@ te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_bilstm.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
+lb_te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
+lb_te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
+lb_te_preds.append(joblib.load("test_pred_bilstm.pkl")[:, np.newaxis])
+lb_te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
 va_preds = np.hstack(va_preds)
 te_preds = np.hstack(te_preds)
+lb_te_preds = np.hstack(lb_te_preds)
 y_va = joblib.load("y_val.pkl")
 
 # from lightgbm import LGBMRegressor
@@ -98,8 +105,8 @@ est = RandomForestClassifier()
 
 y_te = joblib.load('valid_for_emsemble_lable.pkl').values
 
-va_preds_merged, te_preds_merged = merge_predictions(
-    X_tr=va_preds, y_tr=y_va, X_te=te_preds,
+va_preds_merged, te_preds_merged, lb_te_preds_merged = merge_predictions(
+    X_tr=va_preds, y_tr=y_va, X_te=te_preds, X_lb_te=lb_te_preds
     # est=est
 )
 
@@ -109,7 +116,7 @@ print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta
 delta, f_score = bestThresshold(y_te, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
-# df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-# submission = df_test[['qid']].copy()
-# submission['prediction'] = (te_preds_merged > delta).astype(int)
-# submission.to_csv('submission.csv', index=False)
+df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+submission = df_test[['qid']].copy()
+submission['prediction'] = (lb_te_preds_merged > delta).astype(int)
+submission.to_csv('submission.csv', index=False)

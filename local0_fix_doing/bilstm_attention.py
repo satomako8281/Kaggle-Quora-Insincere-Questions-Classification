@@ -382,11 +382,11 @@ def load_and_prec():
     # train_y = train_y[trn_idx]
     # features = features[trn_idx]
 
-    return train_X, test_X, lb_test_X, train_y, features, test_features, tokenizer.word_index
+    return train_X, test_X, lb_test_X, train_y, features, test_features, lb_test_features, tokenizer.word_index
 #     return train_X, test_X, train_y, x_test_f,y_test_f,features, test_features, features_t, tokenizer.word_index
 #     return train_X, test_X, train_y, tokenizer.word_index
 
-x_train, x_test, x_lb_test, y_train, features, test_features, word_index = load_and_prec()
+x_train, x_test, x_lb_test, y_train, features, test_features, lb_test_features, word_index = load_and_prec()
 
 # missing entries in the embedding are set using np.random.normal so we have to seed here too
 seed_everything()
@@ -875,7 +875,7 @@ for i, (x_batch,) in enumerate(test_loader):
     test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
 for i, (x_batch,) in enumerate(lb_test_loader):
-    f = test_features[i * batch_size:(i+1) * batch_size]
+    f = lb_test_features[i * batch_size:(i+1) * batch_size]
     y_pred = model([x_batch,f]).detach()
 
     lb_test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]

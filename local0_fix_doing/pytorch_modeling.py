@@ -140,16 +140,18 @@ lb_test["question_text"] = lb_test["question_text"].apply(lambda x: replace_typi
 
 max_features = 120000
 tk = Tokenizer(lower = True, filters='', num_words=max_features)
-full_text = list(train['question_text'].values) + list(test['question_text'].values)
+full_text = list(train['question_text'].values) + list(test['question_text'].values) + + list(lb_test['question_text'].values)
 tk.fit_on_texts(full_text)
 
 train_tokenized = tk.texts_to_sequences(train['question_text'].fillna('missing'))
 test_tokenized = tk.texts_to_sequences(test['question_text'].fillna('missing'))
+lb_test_tokenized = tk.texts_to_sequences(lb_test['question_text'].fillna('missing'))
 
 max_len = 72
 maxlen = 72
 X_train = pad_sequences(train_tokenized, maxlen = max_len)
 X_test = pad_sequences(test_tokenized, maxlen = max_len)
+X_lb_test = pad_sequences(lb_test_tokenized, maxlen = max_len)
 
 y_train = train['target'].values
 def sigmoid(x):
@@ -282,6 +284,10 @@ test = torch.utils.data.TensorDataset(x_test_cuda)
 batch_size = 512
 test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=False)
 
+x_lb_test_cuda = torch.tensor(X_lb_test, dtype=torch.long).cuda()
+lb_test = torch.utils.data.TensorDataset(x_lb_test_cuda)
+batch_size = 512
+lb_test_loader = torch.utils.data.DataLoader(lb_test, batch_size=batch_size, shuffle=False)
 
 def train_model(model, x_train, y_train, x_val, y_val, validate=True):
     optimizer = torch.optim.Adam(model.parameters())
@@ -350,6 +356,7 @@ def train_model(model, x_train, y_train, x_val, y_val, validate=True):
     print('Validation loss: ', avg_val_loss)
 
     test_preds = np.zeros((len(test_loader.dataset)))
+    lb_test_preds = np.zeros((len(lb_test_loader.dataset)))
 
     for i, (x_batch,) in enumerate(test_loader):
         y_pred = model(x_batch).detach()
@@ -357,7 +364,13 @@ def train_model(model, x_train, y_train, x_val, y_val, validate=True):
         test_preds[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
     # scheduler.step()
 
-    return valid_preds, test_preds#, test_preds_local
+    for i, (x_batch,) in enumerate(lb_test_loader):
+        y_pred = model(x_batch).detach()
+
+        lb_test_preds[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+    # scheduler.step()
+
+    return valid_preds, test_preds, lb_test_preds#, test_preds_local
 
 
 
@@ -386,6 +399,7 @@ seed_everything()
 
 train_preds = np.zeros(len(train))
 test_preds = np.zeros((len(test)))
+lb_test_preds = np.zeros((len(lb_test)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 
@@ -404,7 +418,7 @@ seed_everything(1030)
 model = NeuralNet()
 model.cuda()
 
-valid_preds_fold, test_preds_fold = train_model(
+valid_preds_fold, test_preds_fold, lb_test_preds_fold = train_model(
     model,
     x_train_fold,
     y_train_fold,
@@ -415,9 +429,11 @@ valid_preds_fold, test_preds_fold = train_model(
 
 train_preds[valid_idx] = valid_preds_fold
 test_preds += test_preds_fold / 1
+lb_test_preds += lb_test_preds_fold / 1
 # test_preds_local[:, i] = test_preds_local_fold
 joblib.dump(valid_preds_fold, 'valid_pred_pytorch.pkl', compress=3)
 joblib.dump(test_preds, 'test_pred_pytorch.pkl', compress=3)
+joblib.dump(lb_test_preds, 'lb_test_pred_pytorch.pkl', compress=3)
 
 search_result = threshold_search(y_train[valid_idx.astype(int)], valid_preds_fold)
 print(search_result)
