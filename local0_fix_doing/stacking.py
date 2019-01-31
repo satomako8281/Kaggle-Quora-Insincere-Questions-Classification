@@ -78,12 +78,16 @@ lb_te_preds.append(joblib.load("lb_test_pred_bilstm.pkl")[:, np.newaxis])
 lb_te_preds.append(joblib.load("lb_test_pred_pytorch.pkl")[:, np.newaxis])
 va_preds = np.hstack(va_preds)
 
+for idx in range(4):
+    y_va = joblib.load("y_val.pkl")
+    delta, f_score = bestThresshold(y_va, va_preds[idx])
+    print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+
 print(va_preds[1].shape)
 print(te_preds[1].shape)
 print(lb_te_preds[1].shape)
 te_preds = np.hstack(te_preds)
 lb_te_preds = np.hstack(lb_te_preds)
-y_va = joblib.load("y_val.pkl")
 
 # from lightgbm import LGBMRegressor
 # est = LGBMRegressor(
