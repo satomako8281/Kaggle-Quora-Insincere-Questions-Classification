@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.externals import joblib
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.metrics import f1_score
 
 INPUT_PATH = './input'
@@ -40,8 +40,10 @@ def bestThresshold(y_train, train_preds):
 
 def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
     if est is None:
-        est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
-                    positive=True, random_state=1029, selection='random')
+        # est = Lasso(alpha=0.0001, precompute=True, max_iter=1000,
+        #             positive=True, random_state=1029, selection='random')
+        est = Ridge(alpha=0.0001, max_iter=1000,
+                    random_state=1029)
     est.fit(X_tr, y_tr)
     # if hasattr(est, 'intercept_') and verbose:
         # logger.info('merge_predictions = \n{:+.4f}\n{}'.format(
