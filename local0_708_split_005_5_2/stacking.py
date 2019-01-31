@@ -80,6 +80,8 @@ te_pred0 = joblib.load("test_pred_bilstm_0.pkl")[:, np.newaxis]
 te_pred1 = joblib.load("test_pred_bilstm_1.pkl")[:, np.newaxis]
 te_pred2 = joblib.load("test_pred_bilstm_2.pkl")[:, np.newaxis]
 te_preds.append((te_pred0+te_pred1+te_pred2)/3)
+print(te_preds[1].shape)
+print(te_preds[2].shape)
 te_pred0 = joblib.load("test_pred_pytorch_0.pkl")[:, np.newaxis]
 te_pred1 = joblib.load("test_pred_pytorch_1.pkl")[:, np.newaxis]
 te_pred2 = joblib.load("test_pred_pytorch_2.pkl")[:, np.newaxis]
