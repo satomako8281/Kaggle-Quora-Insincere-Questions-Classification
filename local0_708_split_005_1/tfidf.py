@@ -67,8 +67,8 @@ with timer("reading_data"):
 
     splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
     (train_idx, test_idx) = splits[1]
-    test = train[test_idx]
-    train = train[train_idx]
+    test = train.loc[[test_idx]]
+    train = train.loc[[train_idx]]
     y = train.target.values
     # train, test = train_test_split(
     #     train, test_size=0.2, random_state=SEED, stratify=train['target']
