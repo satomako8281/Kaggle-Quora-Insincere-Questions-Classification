@@ -68,8 +68,8 @@ va_preds = []
 te_preds = []
 va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
-# va_preds.append(joblib.load("valid_pred_bilstm_0.pkl")[:, np.newaxis])
-va_preds.append(joblib.load("valid_pred_bilstm_1.pkl")[:, np.newaxis])
+va_preds.append(joblib.load("valid_pred_bilstm_0.pkl")[:, np.newaxis])
+# va_preds.append(joblib.load("valid_pred_bilstm_1.pkl")[:, np.newaxis])
 # va_preds.append(joblib.load("valid_pred_bilstm_2.pkl")[:, np.newaxis])
 # va_preds.append((va_pred0+va_pred1+va_pred2)/3)
 # va_pred0 = joblib.load("valid_pred_bilstm_0.pkl")[:, np.newaxis]
@@ -88,8 +88,8 @@ va_preds.append(joblib.load("valid_pred_pytorch_0.pkl")[:, np.newaxis])
 
 te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
-# te_preds.append(joblib.load("test_pred_bilstm_0.pkl")[:, np.newaxis])
-te_preds.append(joblib.load("test_pred_bilstm_1.pkl")[:, np.newaxis])
+te_preds.append(joblib.load("test_pred_bilstm_0.pkl")[:, np.newaxis])
+# te_preds.append(joblib.load("test_pred_bilstm_1.pkl")[:, np.newaxis])
 # te_preds.append(joblib.load("test_pred_bilstm_2.pkl")[:, np.newaxis])
 # te_pred0 = joblib.load("test_pred_bilstm_0.pkl")[:, np.newaxis]
 # te_pred1 = joblib.load("test_pred_bilstm_1.pkl")[:, np.newaxis]
