@@ -801,96 +801,99 @@ kfold_X_valid_features = features[valid_idx.astype(int)]
 x_val_fold = torch.tensor(x_train[valid_idx.astype(int)], dtype=torch.long).cuda()
 y_val_fold = torch.tensor(y_train[valid_idx.astype(int), np.newaxis], dtype=torch.float32).cuda()
 
-model = NeuralNet()
-model.cuda()
-loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
-step_size = 300
-base_lr, max_lr = 0.001, 0.003
-optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                             lr=max_lr)
 
-################################################################################################
-scheduler = CyclicLR(optimizer, base_lr=base_lr, max_lr=max_lr,
-                     step_size=step_size, mode='exp_range',
-                     gamma=0.99994)
-###############################################################################################
+for j in range(2):
+    seed_everything(SEED + j)
+    model = NeuralNet()
+    model.cuda()
+    loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
+    step_size = 300
+    base_lr, max_lr = 0.001, 0.003
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
+                                 lr=max_lr)
 
-train = torch.utils.data.TensorDataset(x_train_fold, y_train_fold)
-valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
+    ################################################################################################
+    scheduler = CyclicLR(optimizer, base_lr=base_lr, max_lr=max_lr,
+                         step_size=step_size, mode='exp_range',
+                         gamma=0.99994)
+    ###############################################################################################
 
-train = MyDataset(train)
-valid = MyDataset(valid)
+    train = torch.utils.data.TensorDataset(x_train_fold, y_train_fold)
+    valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
 
-##No need to shuffle the data again here. Shuffling happens when splitting for kfolds.
-train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
+    train = MyDataset(train)
+    valid = MyDataset(valid)
 
-valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
+    ##No need to shuffle the data again here. Shuffling happens when splitting for kfolds.
+    train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
 
-for epoch in range(n_epochs):
-    # set train mode of the model. This enables operations which are only applied during training like dropout
-    start_time = time.time()
-    model.train()
+    valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    avg_loss = 0.
-    for i, (x_batch, y_batch, index) in enumerate(train_loader):
-        # Forward pass: compute predicted y by passing x to the model.
-        ################################################################################################
-        f = kfold_X_features[index]
-        y_pred = model([x_batch,f])
-        ################################################################################################
+    for epoch in range(n_epochs):
+        # set train mode of the model. This enables operations which are only applied during training like dropout
+        start_time = time.time()
+        model.train()
 
-        ################################################################################################
+        avg_loss = 0.
+        for i, (x_batch, y_batch, index) in enumerate(train_loader):
+            # Forward pass: compute predicted y by passing x to the model.
+            ################################################################################################
+            f = kfold_X_features[index]
+            y_pred = model([x_batch,f])
+            ################################################################################################
 
-        if scheduler:
-            scheduler.batch_step()
-        loss = loss_fn(y_pred, y_batch)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        avg_loss += loss.item() / len(train_loader)
+            ################################################################################################
 
-    model.eval()
-    # valid_preds_fold = np.zeros((x_val_fold.size(0)))
-    valid_preds_fold = np.zeros((len(valid_idx)))
-    test_preds_fold = np.zeros((len(df_test)))
-    lb_test_preds_fold = np.zeros((len(df_lb_test)))
-    avg_val_loss = 0.
-    for i, (x_batch, y_batch, index) in enumerate(valid_loader):
-        f = kfold_X_valid_features[index]
+            if scheduler:
+                scheduler.batch_step()
+            loss = loss_fn(y_pred, y_batch)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            avg_loss += loss.item() / len(train_loader)
+
+        model.eval()
+        # valid_preds_fold = np.zeros((x_val_fold.size(0)))
+        valid_preds_fold = np.zeros((len(valid_idx)))
+        test_preds_fold = np.zeros((len(df_test)))
+        lb_test_preds_fold = np.zeros((len(df_lb_test)))
+        avg_val_loss = 0.
+        for i, (x_batch, y_batch, index) in enumerate(valid_loader):
+            f = kfold_X_valid_features[index]
+            y_pred = model([x_batch,f]).detach()
+
+            avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
+            valid_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+
+        elapsed_time = time.time() - start_time
+        print('Epoch {}/{} \t loss={:.4f} \t val_loss={:.4f} \t time={:.2f}s'.format(
+            epoch + 1, n_epochs, avg_loss, avg_val_loss, elapsed_time))
+    avg_losses_f.append(avg_loss)
+    avg_val_losses_f.append(avg_val_loss)
+    # predict all samples in the test set batch per batch
+    for i, (x_batch,) in enumerate(test_loader):
+        f = test_features[i * batch_size:(i+1) * batch_size]
         y_pred = model([x_batch,f]).detach()
 
-        avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
-        valid_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+        test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
-    elapsed_time = time.time() - start_time
-    print('Epoch {}/{} \t loss={:.4f} \t val_loss={:.4f} \t time={:.2f}s'.format(
-        epoch + 1, n_epochs, avg_loss, avg_val_loss, elapsed_time))
-avg_losses_f.append(avg_loss)
-avg_val_losses_f.append(avg_val_loss)
-# predict all samples in the test set batch per batch
-for i, (x_batch,) in enumerate(test_loader):
-    f = test_features[i * batch_size:(i+1) * batch_size]
-    y_pred = model([x_batch,f]).detach()
+    for i, (x_batch,) in enumerate(lb_test_loader):
+        f = lb_test_features[i * batch_size:(i+1) * batch_size]
+        y_pred = model([x_batch,f]).detach()
 
-    test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+        lb_test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
-for i, (x_batch,) in enumerate(lb_test_loader):
-    f = lb_test_features[i * batch_size:(i+1) * batch_size]
-    y_pred = model([x_batch,f]).detach()
+    train_preds[valid_idx] = valid_preds_fold
+    test_preds += test_preds_fold / 1
+    lb_test_preds += lb_test_preds_fold / 1
 
-    lb_test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+    joblib.dump(valid_preds_fold, 'valid_pred_bilstm_{}.pkl'.format(j), compress=3)
+    joblib.dump(test_preds, 'test_pred_bilstm_{}.pkl'.format(j), compress=3)
+    joblib.dump(lb_test_preds, 'lb_test_pred_bilstm_{}.pkl'.format(j), compress=3)
 
-train_preds[valid_idx] = valid_preds_fold
-test_preds += test_preds_fold / 1
-lb_test_preds += lb_test_preds_fold / 1
-
-joblib.dump(valid_preds_fold, 'valid_pred_bilstm.pkl', compress=3)
-joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
-joblib.dump(lb_test_preds, 'lb_test_pred_bilstm.pkl', compress=3)
-
-print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
-print(valid_preds_fold.shape)
-delta = bestThresshold(y_train[valid_idx.astype(int)],valid_preds_fold)
+    print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
+    print(valid_preds_fold.shape)
+    delta = bestThresshold(y_train[valid_idx.astype(int)],valid_preds_fold)
 
 # del X_test, X_train, df, df_test, df_train, features, full_text, mispellings_re, sub, test, test_features, test_tokenized
 # del train, train_tokenized, vocab, word_index, x_test, x_train, y_train

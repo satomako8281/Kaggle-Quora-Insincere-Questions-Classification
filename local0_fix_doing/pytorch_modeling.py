@@ -414,29 +414,30 @@ valid = torch.utils.data.TensorDataset(x_val_fold, y_val_fold)
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-seed_everything(1030)
-model = NeuralNet()
-model.cuda()
+for j in range(2):
+    seed_everything(seed + j)
+    model = NeuralNet()
+    model.cuda()
 
-valid_preds_fold, test_preds_fold, lb_test_preds_fold = train_model(
-    model,
-    x_train_fold,
-    y_train_fold,
-    x_val_fold,
-    y_val_fold,
-    validate=True
-)
+    valid_preds_fold, test_preds_fold, lb_test_preds_fold = train_model(
+        model,
+        x_train_fold,
+        y_train_fold,
+        x_val_fold,
+        y_val_fold,
+        validate=True
+    )
 
-train_preds[valid_idx] = valid_preds_fold
-test_preds += test_preds_fold / 1
-lb_test_preds += lb_test_preds_fold / 1
-# test_preds_local[:, i] = test_preds_local_fold
-joblib.dump(valid_preds_fold, 'valid_pred_pytorch.pkl', compress=3)
-joblib.dump(test_preds, 'test_pred_pytorch.pkl', compress=3)
-joblib.dump(lb_test_preds, 'lb_test_pred_pytorch.pkl', compress=3)
+    train_preds[valid_idx] = valid_preds_fold
+    test_preds += test_preds_fold / 1
+    lb_test_preds += lb_test_preds_fold / 1
+    # test_preds_local[:, i] = test_preds_local_fold
+    joblib.dump(valid_preds_fold, 'valid_pred_pytorch_{}.pkl'.format(j), compress=3)
+    joblib.dump(test_preds, 'test_pred_pytorch_{}.pkl'.format(j), compress=3)
+    joblib.dump(lb_test_preds, 'lb_test_pred_pytorch_{}.pkl'.format(j), compress=3)
 
-search_result = threshold_search(y_train[valid_idx.astype(int)], valid_preds_fold)
-print(search_result)
+    search_result = threshold_search(y_train[valid_idx.astype(int)], valid_preds_fold)
+    print(search_result)
 # sub['prediction'] = test_preds.mean(1) > search_result['threshold']
 # sub.to_csv("submission.csv", index=False)
 
