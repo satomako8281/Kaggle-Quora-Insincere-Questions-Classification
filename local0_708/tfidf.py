@@ -64,7 +64,7 @@ def threshold_search(y_true, y_proba):
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     train, test = train_test_split(
-        train, test_size=0.05, random_state=SEED, stratify=train['target']
+        train, test_size=0.05, random_state=42, stratify=train['target']
     )
     # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
@@ -98,7 +98,7 @@ models = []
 train_meta = np.zeros(y.shape)
 test_meta = np.zeros(X_test.shape[0])
 splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
-(train_idx, valid_idx) = splits[0]
+(train_idx, valid_idx) = splits[1]
 joblib.dump(train_idx, 'train_idx.pkl', compress=3)
 joblib.dump(valid_idx, 'valid_idx.pkl', compress=3)
 X_train = X_nb[train_idx]
