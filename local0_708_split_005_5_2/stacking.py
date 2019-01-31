@@ -32,7 +32,7 @@ logger = setup_custom_logger('quora')
 def bestThresshold(y_train, train_preds):
     tmp = [0, 0, 0]  # idx, cur, max
     delta = 0
-    for tmp[0] in np.arange(-0.01, 0.8, 0.01):
+    for tmp[0] in np.arange(0.00, 0.8, 0.01):
         tmp[1] = f1_score(y_train, np.array(train_preds) > tmp[0])
         if tmp[1] > tmp[2]:
             delta = tmp[0]
@@ -45,7 +45,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
         #             positive=True, random_state=1029, selection='random')
         # est = Ridge(alpha=0.0001, max_iter=1000,
         #             random_state=1029)
-        est = svm.SVR(kernel='linear', C=1e3, epsilon=2.0)
+        est = svm.SVR(kernel='rbf', C=1e3, epsilon=2.0)
     est.fit(X_tr, y_tr)
     # if hasattr(est, 'intercept_') and verbose:
         # logger.info('merge_predictions = \n{:+.4f}\n{}'.format(
