@@ -64,7 +64,7 @@ def threshold_search(y_true, y_proba):
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     train, test = train_test_split(
-        train, test_size=0.2, random_state=SEED, stratify=train['target']
+        train, test_size=0.05, random_state=SEED, stratify=train['target']
     )
     # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
