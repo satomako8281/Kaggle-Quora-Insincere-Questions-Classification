@@ -64,7 +64,7 @@ def merge_predictions(X_tr, y_tr, X_te=None, est=None, verbose=True):
 
 va_preds = []
 te_preds = []
-# va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
+va_preds.append(joblib.load("valid_pred_tfidf.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_mercari.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_bilstm_0.pkl")[:, np.newaxis])
 # va_preds.append(joblib.load("valid_pred_bilstm_1.pkl")[:, np.newaxis])
@@ -84,7 +84,7 @@ va_preds.append(joblib.load("valid_pred_pytorch_0.pkl")[:, np.newaxis])
 # va_preds.append(joblib.load("valid_pred_pytorch_0.pkl")[:, np.newaxis])
 # va_preds.append(joblib.load("valid_pred_pytorch_1.pkl")[:, np.newaxis])
 
-# te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
+te_preds.append(joblib.load("test_pred_tfidf.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_mercari.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_bilstm_0.pkl")[:, np.newaxis])
 # te_preds.append(joblib.load("test_pred_bilstm_1.pkl")[:, np.newaxis])
