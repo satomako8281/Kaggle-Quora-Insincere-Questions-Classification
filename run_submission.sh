@@ -21,7 +21,7 @@ git fetch && git merge
 #python local0_708_split2/stacking.py
 #
 #echo 3
-python local0_708_split3/tfidf.py
+#python local0_708_split3/tfidf.py
 #python local0_708_split3/mercari_mlp_without_embeddings.py
 #python local0_708_split3/bilstm_attention.py
 #python local0_708_split3/pytorch_modeling.py
