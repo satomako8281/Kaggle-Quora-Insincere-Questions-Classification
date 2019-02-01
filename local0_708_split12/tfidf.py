@@ -63,14 +63,12 @@ def threshold_search(y_true, y_proba):
 
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-    train, test = train_test_split(
-        train, test_size=0.05, random_state=SEED, stratify=train['target']
-    )
-    # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
+    y = train.target.values
+    y = train.target.values
+    test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
     joblib.dump(train, 'train.pkl', compress=3)
     joblib.dump(test, 'valid_for_emsemble.pkl', compress=3)
-    joblib.dump(test['target'], 'valid_for_emsemble_label.pkl', compress=3)
 
     sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values
@@ -98,7 +96,7 @@ models = []
 train_meta = np.zeros(y.shape)
 test_meta = np.zeros(X_test.shape[0])
 splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
-(train_idx, valid_idx) = splits[0]
+(train_idx, valid_idx) = splits[12]
 joblib.dump(train_idx, 'train_idx.pkl', compress=3)
 joblib.dump(valid_idx, 'valid_idx.pkl', compress=3)
 X_train = X_nb[train_idx]
