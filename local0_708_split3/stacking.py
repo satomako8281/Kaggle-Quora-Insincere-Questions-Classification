@@ -108,7 +108,6 @@ print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta
 df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 submission = df_test[['qid']].copy()
 submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission3.csv', index=False)
 submission.to_csv('submission3_lasso.csv', index=False)
 
 est = Ridge(alpha=0.0001, max_iter=1000,
@@ -124,5 +123,4 @@ print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta
 df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 submission = df_test[['qid']].copy()
 submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission3.csv', index=False)
 submission.to_csv('submission3_ridge.csv', index=False)

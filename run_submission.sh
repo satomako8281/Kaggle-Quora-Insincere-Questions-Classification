@@ -25,10 +25,10 @@ git fetch && git merge
 #python local0_708_split3/mercari_mlp_without_embeddings.py
 #python local0_708_split3/bilstm_attention.py
 #python local0_708_split3/pytorch_modeling.py
-python local0_708_split3/stacking.py
+#python local0_708_split3/stacking.py
 
 echo 4
-python local0_708_split4/tfidf.py
+#python local0_708_split4/tfidf.py
 python local0_708_split4/mercari_mlp_without_embeddings.py
 python local0_708_split4/bilstm_attention.py
 python local0_708_split4/pytorch_modeling.py
