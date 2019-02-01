@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.externals import joblib
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.metrics import f1_score
 
 INPUT_PATH = './input'
@@ -116,4 +116,19 @@ print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta
 df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 submission = df_test[['qid']].copy()
 submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission9.csv', index=False)
+submission.to_csv('submission9_lasso.csv', index=False)
+
+est = Ridge(alpha=0.0001, max_iter=1000,
+            random_state=1029)
+va_preds_merged, te_preds_merged = merge_predictions(
+    X_tr=va_preds, y_tr=y_va, X_te=te_preds,
+    est=est
+)
+delta, f_score = bestThresshold(y_va, va_preds_merged)
+print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+
+
+df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+submission = df_test[['qid']].copy()
+submission['prediction'] = (te_preds_merged > delta).astype(int)
+submission.to_csv('submission9_ridge.csv', index=False)
