@@ -213,7 +213,7 @@ def clean_special_chars(text, punct, mapping):
         text = text.replace(p, mapping[p])
 
     for p in punct:
-        text = text.replace(p, f' {p} ')
+        text = text.replace(p, ' {} '.format(p))
 
     specials = {'\u200b': ' ', '…': ' ... ', '\ufeff': '', 'करना': '',
                 'है': ''}  # Other special characters that I have to deal with in last
@@ -229,7 +229,7 @@ def add_lower(embedding, vocab):
         if word in embedding and word.lower() not in embedding:
             embedding[word.lower()] = embedding[word]
             count += 1
-    print(f"Added {count} words to embedding")
+    print("Added {} words to embedding".format(count))
 
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*',
@@ -856,7 +856,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
 
     valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    print(f'Fold {i + 1}')
+    print('Fold {}'.format(i+1))
     for epoch in range(n_epochs):
         # set train mode of the model. This enables operations which are only applied during training like dropout
         start_time = time.time()
@@ -1356,7 +1356,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
     valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    print(f'Fold {i + 1}')
+    print('Fold {}'.format(i+1))
 
     seed_everything(seed + i)
     model = NeuralNet()
