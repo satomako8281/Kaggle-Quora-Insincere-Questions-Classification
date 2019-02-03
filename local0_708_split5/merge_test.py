@@ -65,11 +65,16 @@ def threshold_search(y_true, y_proba):
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     y = train.target.values
+    splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
+    (train_idx, test_idx) = splits[5]
+    test = train.loc[test_idx.tolist(), :]
+    train = train.loc[train_idx.tolist(), :]
     y = train.target.values
-    test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
+    # test = pd.read_csv(os.path.join(INPUT_PATH, 'test.csv'))
 
     joblib.dump(train, 'train.pkl', compress=3)
     joblib.dump(test, 'valid_for_emsemble.pkl', compress=3)
+    joblib.dump(test['target'], 'valid_for_emsemble_label.pkl', compress=3)
 
     sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
     y = train.target.values
@@ -1751,6 +1756,12 @@ va_preds_merged, te_preds_merged = merge_predictions(
 delta, f_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
+y_te = joblib.load('valid_for_emsemble_label.pkl').values
+f_score = f1_score(y_te, np.array(te_preds_merged) > delta)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+
+delta, f_score = bestThresshold(y_te, te_preds_merged)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
 df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
 submission = df_test[['qid']].copy()
