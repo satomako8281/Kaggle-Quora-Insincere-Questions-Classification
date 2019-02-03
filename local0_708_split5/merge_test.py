@@ -16,7 +16,7 @@ from sklearn.metrics import f1_score
 
 TOKENIZER = re.compile('([{}“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
 SEED = 1029
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 
 @contextmanager
@@ -165,7 +165,7 @@ maxlen = 70 # max number of words in a question to use
 batch_size = 512 # how many samples to process at once
 n_epochs = 3 # how many times to iterate over all samples
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 SEED = 1029
 def seed_everything(seed=1029):
     random.seed(seed)
@@ -1036,7 +1036,7 @@ import re
 n_epochs = 3
 embed_size = 300
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 # train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
 # test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
@@ -1461,7 +1461,7 @@ import gc
 import re
 import string
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 @contextmanager
 def timer(name):
     t0 = time.time()
@@ -1694,7 +1694,7 @@ from sklearn.externals import joblib
 from sklearn.linear_model import Lasso, Ridge
 from sklearn.metrics import f1_score
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 def setup_custom_logger(name):
     formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
