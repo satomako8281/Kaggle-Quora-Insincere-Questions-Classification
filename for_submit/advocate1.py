@@ -1339,7 +1339,8 @@ def seed_everything(seed=1234):
 seed_everything()
 
 train_preds = np.zeros(len(train))
-test_preds = np.zeros((len(test), len(splits))
+test_preds = np.zeros((len(test), len(splits)))
+from tqdm import tqdm
 from sklearn.metrics import f1_score
 
 splits = list(StratifiedKFold(n_splits=4, shuffle=True, random_state=10).split(X_train, y_train))
