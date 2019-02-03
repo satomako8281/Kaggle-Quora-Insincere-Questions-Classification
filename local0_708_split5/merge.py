@@ -117,7 +117,7 @@ joblib.dump(test_meta, 'test_pred_tfidf.pkl', compress=3)
 search_result = threshold_search(y_val, valid_pred[:, 1])
 print(search_result)
 
-del BaseEstimator, INPUT_PATH, LogisticRegression, NBTransformer, SEED, StratifiedKFold, TOKENIZER, TfidfVectorizer, TransformerMixin, X, X_nb, X_test, X_test_nb, X_train, X_val, contextmanager, csr_matrix, f1_score, gc, model, models, nb_transformer, np, os, pd, re, search_result, splits, string, sys, tfidf_vectorizer, threshold_search, time, timer, tokenize, train_test_split, valid_pred, var_name, y
+del BaseEstimator, INPUT_PATH, LogisticRegression, NBTransformer, SEED, StratifiedKFold, TOKENIZER, TfidfVectorizer, TransformerMixin, X, X_nb, X_test, X_test_nb, X_train, X_val, contextmanager, csr_matrix, f1_score, gc, model, models, nb_transformer, np, os, pd, re, search_result, splits, string, tfidf_vectorizer, threshold_search, time, timer, tokenize, train_test_split, valid_pred, y
 import gc
 gc.collect()
 
