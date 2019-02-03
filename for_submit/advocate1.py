@@ -916,7 +916,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     test_preds[:, i] = test_preds_fold
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
 joblib.dump(train_preds, 'valid_pred_bilstm.pkl', compress=3)
-joblib.dump(test_preds_fold, 'test_pred_bilstm.pkl', compress=3)
+joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
 
 delta = bestThresshold(y_train[valid_idx.astype(int)], valid_preds_fold)
 
