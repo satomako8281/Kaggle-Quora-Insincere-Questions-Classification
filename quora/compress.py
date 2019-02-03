@@ -21,7 +21,7 @@ def decode(code, sbase, size):
     return bin_str
 
 
-df = pd.read_csv('~/tmp/submission9_lasso.csv')
+df = pd.read_csv('~/tmp/submission10_lasso.csv')
 mojiretu = ''
 for x in df['prediction'].values.tolist():
     mojiretu += str(x)

@@ -59,7 +59,7 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')[:300]
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE))
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8', errors='ignore'))
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = -0.005838499, 0.48782197
