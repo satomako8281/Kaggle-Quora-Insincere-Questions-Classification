@@ -1414,7 +1414,7 @@ te_preds = []
 va_preds.append(joblib.load("valid_pred_bilstm.pkl")[:, np.newaxis])
 va_preds.append(joblib.load("valid_pred_pytorch.pkl")[:, np.newaxis])
 te_preds.append(joblib.load("test_pred_bilstm.pkl")[:, np.newaxis])
-te_preds.append(joblib.load("test_pred_pytorch.pkl")[:, np.newaxis])
+te_preds.append(joblib.load("test_pred_pytorch.pkl").mean(1)[:, np.newaxis])
 print(te_preds[0].shape)
 print(te_preds[1].shape)
 va_preds = np.hstack(va_preds)
