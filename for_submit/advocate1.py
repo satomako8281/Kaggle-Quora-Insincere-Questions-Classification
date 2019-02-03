@@ -956,9 +956,9 @@ embed_size = 300
 
 INPUT_PATH = './input'
 
-# train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
-# test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-# sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
+train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
+test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
+sub = pd.read_csv(os.path.join(INPUT_PATH, 'sample_submission.csv'))
 
 puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*',
           '+', '\\', '•', '~', '@', '£',
@@ -1064,15 +1064,15 @@ def replace_typical_misspell(text):
 
 
 # Clean the text
-# train["question_text"] = train["question_text"].apply(lambda x: clean_text(x.lower()))
-# test["question_text"] = test["question_text"].apply(lambda x: clean_text(x.lower()))
+train["question_text"] = train["question_text"].apply(lambda x: clean_text(x.lower()))
+test["question_text"] = test["question_text"].apply(lambda x: clean_text(x.lower()))
 
 # Clean numbers
-# train["question_text"] = train["question_text"].apply(lambda x: clean_numbers(x))
-# test["question_text"] = test["question_text"].apply(lambda x: clean_numbers(x))
+train["question_text"] = train["question_text"].apply(lambda x: clean_numbers(x))
+test["question_text"] = test["question_text"].apply(lambda x: clean_numbers(x))
 
-train = joblib.load('df_train.pkl')
-test = joblib.load('df_test.pkl')
+# train = joblib.load('df_train.pkl')
+# test = joblib.load('df_test.pkl')
 # Clean speelings
 train["question_text"] = train["question_text"].apply(lambda x: replace_typical_misspell(x))
 test["question_text"] = test["question_text"].apply(lambda x: replace_typical_misspell(x))
