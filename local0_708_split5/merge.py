@@ -1,3 +1,4 @@
+import gc
 from sklearn.externals import joblib
 import os
 import re
