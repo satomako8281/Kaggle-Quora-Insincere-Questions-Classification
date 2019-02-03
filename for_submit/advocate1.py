@@ -34,7 +34,7 @@
 # maxlen = 70  # max number of words in a question to use
 # batch_size = 512  # how many samples to process at once
 # n_epochs = 3  # how many times to iterate over all samples
-# n_splits = 5  # Number of K-fold Splits
+n_splits = 5  # Number of K-fold Splits
 #
 # SEED = 1029
 #
@@ -1332,7 +1332,7 @@ def seed_everything(seed=1234):
 seed_everything()
 
 train_preds = np.zeros(len(train))
-test_preds = np.zeros((len(test), len(splits)))
+test_preds = np.zeros((len(test), len(n_splits)))
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 
