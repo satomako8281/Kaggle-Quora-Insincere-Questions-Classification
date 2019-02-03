@@ -788,7 +788,7 @@ def sigmoid(x):
 train_preds = np.zeros((len(x_train)))
 # matrix for the predictions on the test set
 # test_preds = np.zeros((len(df_test)))
-test_preds = np.zeros((len(test), len(splits)))
+test_preds = np.zeros((len(df_test), len(splits)))
 # always call this before training for deterministic results
 seed_everything()
 
