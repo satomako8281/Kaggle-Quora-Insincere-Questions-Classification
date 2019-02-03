@@ -54,7 +54,7 @@ seed_everything()
 ## FUNCTIONS TAKEN FROM https://www.kaggle.com/gmhost/gru-capsule
 
 def load_glove(word_index):
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = './input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')[:300]
@@ -79,7 +79,7 @@ def load_glove(word_index):
 
 
 def load_fasttext(word_index):
-    EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    EMBEDDING_FILE = './input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -103,7 +103,7 @@ def load_fasttext(word_index):
 
 
 def load_para(word_index):
-    EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    EMBEDDING_FILE = './input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -127,8 +127,8 @@ def load_para(word_index):
     return embedding_matrix
 
 
-df_train = pd.read_csv("../input/train.csv")
-df_test = pd.read_csv("../input/test.csv")
+df_train = pd.read_csv("./input/train.csv")
+df_test = pd.read_csv("./input/test.csv")
 joblib.dump(df_train, 'df_train.pkl', compress=3)
 joblib.dump(df_test, 'df_test.pkl', compress=3)
 
@@ -327,8 +327,8 @@ def add_features(df):
 
 
 def load_and_prec():
-    train_df = pd.read_csv("../input/train.csv")
-    test_df = pd.read_csv("../input/test.csv")
+    train_df = pd.read_csv("./input/train.csv")
+    test_df = pd.read_csv("./input/test.csv")
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 
@@ -954,7 +954,7 @@ import re
 n_epochs = 3
 embed_size = 300
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 # train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
 # test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
@@ -1385,7 +1385,7 @@ from sklearn.externals import joblib
 from sklearn.linear_model import Lasso
 from sklearn.metrics import f1_score
 
-INPUT_PATH = '../input'
+INPUT_PATH = './input'
 
 
 def bestThresshold(y_train, train_preds):
@@ -1435,10 +1435,10 @@ submission.to_csv('submission.csv', index=False)
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
-# Input data files are available in the "../input/" directory.
+# Input data files are available in the "./input/" directory.
 # For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
 
 import os
-print(os.listdir("../input"))
+print(os.listdir("./input"))
 
 # Any results you write to the current directory are saved as output.
