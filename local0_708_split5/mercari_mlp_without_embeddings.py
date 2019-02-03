@@ -237,3 +237,9 @@ joblib.dump(y_pred[train_count:], 'test_pred_mercari.pkl', compress=3)
 
 # del dev_ids, df_test, mispellings_re, test_qids, train_ids, wft, y_pred
 # gc.collect()
+
+del PandasSelector, Pipeline, StratifiedKFold, TOKENIZER, TfidfVectorizer, ThreadPool, TransformerMixin, X_train, clean_numbers, clean_text, contextmanager, datasets, dev_ids, df_test, fit_predict, itemgetter, joblib, make_pipeline, make_union, mispell_dict, mispellings, mispellings_re, np, on_field, os, pd, pool, puncts, re, rep, replace_typical_misspell, scores, test_count, test_qids, tf, thresh, thresholds, tokenize, train_count, train_ids, vectorizer, y_pred, y_train, wft
+import gc
+gc.collect()
+
+

@@ -425,3 +425,6 @@ print(search_result)
 # del test_preds, train_idx, train_preds, valid_idx, vocab, word_index, x_test, x_train
 # del y_train
 # gc.collect()
+del X_test, X_train, embedding_index, embedding_matrix, full_text, test_preds, test_preds_fold, test_tokenized, train_idx, train_preds, train_tokenized, valid_idx, valid_preds_fold, word_index
+import gc
+gc.collect()
