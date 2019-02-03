@@ -1,30 +1,30 @@
 git fetch && git merge
-#echo 0
-#python local0_708_split0/tfidf.py
-#python local0_708_split0/mercari_mlp_without_embeddings.py
-#python local0_708_split0/bilstm_attention.py
-#python local0_708_split0/pytorch_modeling.py
-#python local0_708_split0/stacking.py
+echo 0
+python local0_708_split0/tfidf.py
+python local0_708_split0/mercari_mlp_without_embeddings.py
+python local0_708_split0/bilstm_attention.py
+python local0_708_split0/pytorch_modeling.py
+python local0_708_split0/stacking.py
 #
-#echo 1
-#python local0_708_split1/tfidf.py
-#python local0_708_split1/mercari_mlp_without_embeddings.py
-#python local0_708_split1/bilstm_attention.py
-#python local0_708_split1/pytorch_modeling.py
-#python local0_708_split1/stacking.py
+echo 1
+python local0_708_split1/tfidf.py
+python local0_708_split1/mercari_mlp_without_embeddings.py
+python local0_708_split1/bilstm_attention.py
+python local0_708_split1/pytorch_modeling.py
+python local0_708_split1/stacking.py
 #
 #echo 2
-#python local0_708_split2/tfidf.py
-#python local0_708_split2/mercari_mlp_without_embeddings.py
-#python local0_708_split2/bilstm_attention.py
-#python local0_708_split2/pytorch_modeling.py
-#python local0_708_split2/stacking.py
+python local0_708_split2/tfidf.py
+python local0_708_split2/mercari_mlp_without_embeddings.py
+python local0_708_split2/bilstm_attention.py
+python local0_708_split2/pytorch_modeling.py
+python local0_708_split2/stacking.py
 #
-#echo 3
-#python local0_708_split3/tfidf.py
-#python local0_708_split3/mercari_mlp_without_embeddings.py
-#python local0_708_split3/bilstm_attention.py
-#python local0_708_split3/pytorch_modeling.py
+echo 3
+python local0_708_split3/tfidf.py
+python local0_708_split3/mercari_mlp_without_embeddings.py
+python local0_708_split3/bilstm_attention.py
+python local0_708_split3/pytorch_modeling.py
 python local0_708_split3/stacking.py
 
 echo 4

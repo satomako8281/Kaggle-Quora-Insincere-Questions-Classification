@@ -11,3 +11,14 @@ with timer("fitting on {}th split".format(idx)):
     valid_pred = model.predict_proba(X_val)
     train_meta[valid_idx] = valid_pred[:,1]
     test_meta += model.predict_proba(X_test_nb)[:,1] / len(splits)
+
+
+df_train.pkl
+df_test.pkl
+pre_df_train.pkl
+pre_df_test.pkl
+pre2_df_train.pkl
+pre2_df_test.pkl
+embedding_matrix.pkl
+joblib.dump(train_idx, 'train_idx.pkl', compress=3)
+joblib.dump(valid_idx, 'valid_idx.pkl', compress=3)
