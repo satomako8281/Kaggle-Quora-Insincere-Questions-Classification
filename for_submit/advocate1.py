@@ -803,7 +803,7 @@ test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=F
 avg_losses_f = []
 avg_val_losses_f = []
 
-for i, (train_idx, valid_idx) in enumerate(splits):
+for j, (train_idx, valid_idx) in enumerate(splits):
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     features = np.array(features)
@@ -849,7 +849,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
 
     valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    print('Fold {}'.format(i+1))
+    print('Fold {}'.format(j+1))
     for epoch in range(n_epochs):
         # set train mode of the model. This enables operations which are only applied during training like dropout
         start_time = time.time()
@@ -913,7 +913,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
 
     train_preds[valid_idx] = valid_preds_fold
     # test_preds += test_preds_fold / len(splits)
-    test_preds[:, i] = test_preds_fold
+    test_preds[:, j] = test_preds_fold
 print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
 joblib.dump(train_preds, 'valid_pred_bilstm.pkl', compress=3)
 joblib.dump(test_preds, 'test_pred_bilstm.pkl', compress=3)
