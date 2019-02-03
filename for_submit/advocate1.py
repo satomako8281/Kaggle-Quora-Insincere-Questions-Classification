@@ -6,15 +6,11 @@ import numpy as np
 import gc
 import re
 import torch
-from torchtext import data
-import spacy
 from tqdm import tqdm_notebook, tnrange
 from tqdm.auto import tqdm
 
 tqdm.pandas(desc='Progress')
 from collections import Counter
-from textblob import TextBlob
-from nltk import word_tokenize
 
 import torch.nn as nn
 import torch.optim as optim
@@ -22,9 +18,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.autograd import Variable
-from torchtext.data import Example
 from sklearn.metrics import f1_score
-import torchtext
 import os
 
 from keras.preprocessing.text import Tokenizer
@@ -34,7 +28,6 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 from torch.optim.optimizer import Optimizer
-from unidecode import unidecode
 
 embed_size = 300  # how big is each word vector
 max_features = 120000  # how many unique words to use (i.e num rows in embedding vector)
