@@ -52,7 +52,7 @@ seed_everything()
 ## FUNCTIONS TAKEN FROM https://www.kaggle.com/gmhost/gru-capsule
 
 def load_glove(word_index):
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = './input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')[:300]
@@ -77,7 +77,7 @@ def load_glove(word_index):
 
 
 def load_fasttext(word_index):
-    EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    EMBEDDING_FILE = './input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -101,7 +101,7 @@ def load_fasttext(word_index):
 
 
 def load_para(word_index):
-    EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    EMBEDDING_FILE = './input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -125,7 +125,7 @@ def load_para(word_index):
     return embedding_matrix
 
 
-df_train = pd.read_csv("../input/train.csv")
+df_train = pd.read_csv("./input/train.csv")
 y = df_train.target.values
 splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(df_train, y))
 (train_idx, test_idx) = splits[5]
@@ -331,8 +331,8 @@ def add_features(df):
 
 
 def load_and_prec():
-    # train_df = pd.read_csv("../input/train.csv")
-    # test_df = pd.read_csv("../input/test.csv")
+    # train_df = pd.read_csv("./input/train.csv")
+    # test_df = pd.read_csv("./input/test.csv")
     train_df = joblib.load('train.pkl')
     test_df = joblib.load('valid_for_emsemble.pkl')
     # joblib.dump(df_test['target'], 'valid_for_emsemble_label.pkl', compress=3)
