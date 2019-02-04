@@ -128,7 +128,7 @@ def load_para(word_index):
 df_train = pd.read_csv("./input/train.csv")
 y = df_train.target.values
 splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED).split(df_train, y))
-(train_idx, test_idx) = splits[5]
+(train_idx, test_idx) = splits[0]
 df_test = df_train.loc[test_idx.tolist(), :]
 df_train = df_train.loc[train_idx.tolist(), :]
 from sklearn.externals import joblib
