@@ -65,8 +65,8 @@ def threshold_search(y_true, y_proba):
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     y = train.target.values
-    splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED).split(train, y))
-    (train_idx, test_idx) = splits[3]
+    splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
+    (train_idx, test_idx) = splits[5]
     test = train.loc[test_idx.tolist(), :]
     train = train.loc[train_idx.tolist(), :]
     y = train.target.values
