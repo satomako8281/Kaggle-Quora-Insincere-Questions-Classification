@@ -26,7 +26,6 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 from torch.optim.optimizer import Optimizer
-from unidecode import unidecode
 
 embed_size = 300  # how big is each word vector
 max_features = 120000  # how many unique words to use (i.e num rows in embedding vector)
