@@ -65,7 +65,7 @@ def threshold_search(y_true, y_proba):
 with timer("reading_data"):
     train = pd.read_csv(os.path.join(INPUT_PATH, "train.csv"))
     y = train.target.values
-    splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).split(train, y))
+    splits = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED).split(train, y))
     (train_idx, test_idx) = splits[5]
     test = train.loc[test_idx.tolist(), :]
     train = train.loc[train_idx.tolist(), :]
@@ -1762,9 +1762,4 @@ print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_sc
 
 delta, f_score = bestThresshold(y_te, te_preds_merged)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
-
-df_test = pd.read_csv(os.path.join(INPUT_PATH, "test.csv"))
-submission = df_test[['qid']].copy()
-submission['prediction'] = (te_preds_merged > delta).astype(int)
-submission.to_csv('submission.csv', index=False)
 
