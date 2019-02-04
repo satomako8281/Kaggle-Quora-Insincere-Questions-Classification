@@ -35,12 +35,12 @@ from sklearn.metrics import f1_score
 from torch.optim.optimizer import Optimizer
 from unidecode import unidecode
 
-embed_size = 300 # how big is each word vector
-max_features = 120000 # how many unique words to use (i.e num rows in embedding vector)
-maxlen = 70 # max number of words in a question to use
-batch_size = 512 # how many samples to process at once
-n_epochs = 5 # how many times to iterate over all samples
-n_splits = 5 # Number of K-fold Splits
+embed_size = 300  # how big is each word vector
+max_features = 120000  # how many unique words to use (i.e num rows in embedding vector)
+maxlen = 70  # max number of words in a question to use
+batch_size = 512  # how many samples to process at once
+n_epochs = 5  # how many times to iterate over all samples
+n_splits = 5  # Number of K-fold Splits
 
 SEED = 1029
 
@@ -52,44 +52,54 @@ def seed_everything(seed=1029):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
+
+
 seed_everything()
+
 
 ## FUNCTIONS TAKEN FROM https://www.kaggle.com/gmhost/gru-capsule
 
 def load_glove(word_index):
     EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
-    def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')[:300]
+
+    def get_coefs(word, *arr):
+        return word, np.asarray(arr, dtype='float32')[:300]
+
     embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE))
 
     all_embs = np.stack(embeddings_index.values())
-    emb_mean,emb_std = -0.005838499,0.48782197
+    emb_mean, emb_std = -0.005838499, 0.48782197
     embed_size = all_embs.shape[1]
 
     # word_index = tokenizer.word_index
     nb_words = min(max_features, len(word_index))
     # Why random embedding for OOV? what if use mean?
     embedding_matrix = np.random.normal(emb_mean, emb_std, (nb_words, embed_size))
-    #embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size)) # std 0
+    # embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size)) # std 0
     for word, i in word_index.items():
         if i >= max_features: continue
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None: embedding_matrix[i] = embedding_vector
 
     return embedding_matrix
+
 
 def load_fasttext(word_index):
     EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
-    def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if len(o)>100)
+
+    def get_coefs(word, *arr):
+        return word, np.asarray(arr, dtype='float32')
+
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if len(o) > 100)
 
     all_embs = np.stack(embeddings_index.values())
-    emb_mean,emb_std = all_embs.mean(), all_embs.std()
+    emb_mean, emb_std = all_embs.mean(), all_embs.std()
     embed_size = all_embs.shape[1]
 
     # word_index = tokenizer.word_index
     nb_words = min(max_features, len(word_index))
     embedding_matrix = np.random.normal(emb_mean, emb_std, (nb_words, embed_size))
-    #embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size))
+    # embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size))
     for word, i in word_index.items():
         if i >= max_features: continue
         embedding_vector = embeddings_index.get(word)
@@ -97,19 +107,24 @@ def load_fasttext(word_index):
 
     return embedding_matrix
 
+
 def load_para(word_index):
     EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
-    def get_coefs(word,*arr): return word, np.asarray(arr, dtype='float32')
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8", errors='ignore') if len(o)>100)
+
+    def get_coefs(word, *arr):
+        return word, np.asarray(arr, dtype='float32')
+
+    embeddings_index = dict(
+        get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8", errors='ignore') if len(o) > 100)
 
     all_embs = np.stack(embeddings_index.values())
-    emb_mean,emb_std = -0.0053247833,0.49346462
+    emb_mean, emb_std = -0.0053247833, 0.49346462
     embed_size = all_embs.shape[1]
 
     # word_index = tokenizer.word_index
     nb_words = min(max_features, len(word_index))
     embedding_matrix = np.random.normal(emb_mean, emb_std, (nb_words, embed_size))
-    #embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size))
+    # embedding_matrix = np.random.normal(emb_mean, 0, (nb_words, embed_size))
     for word, i in word_index.items():
         if i >= max_features: continue
         embedding_vector = embeddings_index.get(word)
@@ -125,6 +140,7 @@ splits = list(StratifiedKFold(n_splits=20, shuffle=True, random_state=SEED).spli
 df_test = df_train.loc[test_idx.tolist(), :]
 df_train = df_train.loc[train_idx.tolist(), :]
 from sklearn.externals import joblib
+
 joblib.dump(df_train, 'train.pkl', compress=3)
 joblib.dump(df_test, 'valid_for_emsemble.pkl', compress=3)
 joblib.dump(df_test['target'], 'valid_for_emsemble_label.pkl', compress=3)
@@ -141,7 +157,10 @@ def build_vocab(texts):
             except KeyError:
                 vocab[word] = 1
     return vocab
+
+
 vocab = build_vocab(df['question_text'])
+
 
 def build_vocab(texts):
     sentences = texts.apply(lambda x: x.split()).values
@@ -218,17 +237,24 @@ def add_lower(embedding, vocab):
     print("Added {} words to embedding".format(count))
 
 
- puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
- '·', '_', '{', '}', '©', '^', '®', '`',  '<', '→', '°', '€', '™', '›',  '♥', '←', '×', '§', '″', '′', 'Â', '█', '½', 'à', '…',
- '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶', '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥', '▓', '—', '‹', '─',
- '▒', '：', '¼', '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲', 'è', '¸', '¾', 'Ã', '⋅', '‘', '∞',
- '∙', '）', '↓', '、', '│', '（', '»', '，', '♪', '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹', '≤', '‡', '√', ]
+puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*',
+          '+', '\\', '•', '~', '@', '£',
+          '·', '_', '{', '}', '©', '^', '®', '`', '<', '→', '°', '€', '™', '›', '♥', '←', '×', '§', '″', '′', 'Â', '█',
+          '½', 'à', '…',
+          '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶', '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥',
+          '▓', '—', '‹', '─',
+          '▒', '：', '¼', '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲', 'è', '¸', '¾',
+          'Ã', '⋅', '‘', '∞',
+          '∙', '）', '↓', '、', '│', '（', '»', '，', '♪', '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹',
+          '≤', '‡', '√', ]
+
 
 def clean_text(x):
     x = str(x)
     for punct in puncts:
         x = x.replace(punct, ' {} '.format(punct))
     return x
+
 
 def clean_numbers(x):
     x = re.sub('[0-9]{5,}', '#####', x)
@@ -237,33 +263,80 @@ def clean_numbers(x):
     x = re.sub('[0-9]{2}', '##', x)
     return x
 
-mispell_dict = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'cause": "because", "could've": "could have", "couldn't": "could not", "didn't": "did not",  "doesn't": "does not", "don't": "do not", "hadn't": "had not", "hasn't": "has not", "haven't": "have not", "he'd": "he would","he'll": "he will", "he's": "he is", "how'd": "how did", "how'd'y": "how do you", "how'll": "how will", "how's": "how is",  "I'd": "I would", "I'd've": "I would have", "I'll": "I will", "I'll've": "I will have","I'm": "I am", "I've": "I have", "i'd": "i would", "i'd've": "i would have", "i'll": "i will",  "i'll've": "i will have","i'm": "i am", "i've": "i have", "isn't": "is not", "it'd": "it would", "it'd've": "it would have", "it'll": "it will", "it'll've": "it will have","it's": "it is", "let's": "let us", "ma'am": "madam", "mayn't": "may not", "might've": "might have","mightn't": "might not","mightn't've": "might not have", "must've": "must have", "mustn't": "must not", "mustn't've": "must not have", "needn't": "need not", "needn't've": "need not have","o'clock": "of the clock", "oughtn't": "ought not", "oughtn't've": "ought not have", "shan't": "shall not", "sha'n't": "shall not", "shan't've": "shall not have", "she'd": "she would", "she'd've": "she would have", "she'll": "she will", "she'll've": "she will have", "she's": "she is", "should've": "should have", "shouldn't": "should not", "shouldn't've": "should not have", "so've": "so have","so's": "so as", "this's": "this is","that'd": "that would", "that'd've": "that would have", "that's": "that is", "there'd": "there would", "there'd've": "there would have", "there's": "there is", "here's": "here is","they'd": "they would", "they'd've": "they would have", "they'll": "they will", "they'll've": "they will have", "they're": "they are", "they've": "they have", "to've": "to have", "wasn't": "was not", "we'd": "we would", "we'd've": "we would have", "we'll": "we will", "we'll've": "we will have", "we're": "we are", "we've": "we have", "weren't": "were not", "what'll": "what will", "what'll've": "what will have", "what're": "what are",  "what's": "what is", "what've": "what have", "when's": "when is", "when've": "when have", "where'd": "where did", "where's": "where is", "where've": "where have", "who'll": "who will", "who'll've": "who will have", "who's": "who is", "who've": "who have", "why's": "why is", "why've": "why have", "will've": "will have", "won't": "will not", "won't've": "will not have", "would've": "would have", "wouldn't": "would not", "wouldn't've": "would not have", "y'all": "you all", "y'all'd": "you all would","y'all'd've": "you all would have","y'all're": "you all are","y'all've": "you all have","you'd": "you would", "you'd've": "you would have", "you'll": "you will", "you'll've": "you will have", "you're": "you are", "you've": "you have", 'colour': 'color', 'centre': 'center', 'favourite': 'favorite', 'travelling': 'traveling', 'counselling': 'counseling', 'theatre': 'theater', 'cancelled': 'canceled', 'labour': 'labor', 'organisation': 'organization', 'wwii': 'world war 2', 'citicise': 'criticize', 'youtu ': 'youtube ', 'Qoura': 'Quora', 'sallary': 'salary', 'Whta': 'What', 'narcisist': 'narcissist', 'howdo': 'how do', 'whatare': 'what are', 'howcan': 'how can', 'howmuch': 'how much', 'howmany': 'how many', 'whydo': 'why do', 'doI': 'do I', 'theBest': 'the best', 'howdoes': 'how does', 'mastrubation': 'masturbation', 'mastrubate': 'masturbate', "mastrubating": 'masturbating', 'pennis': 'penis', 'Etherium': 'Ethereum', 'narcissit': 'narcissist', 'bigdata': 'big data', '2k17': '2017', '2k18': '2018', 'qouta': 'quota', 'exboyfriend': 'ex boyfriend', 'airhostess': 'air hostess', "whst": 'what', 'watsapp': 'whatsapp', 'demonitisation': 'demonetization', 'demonitization': 'demonetization', 'demonetisation': 'demonetization'}
+
+mispell_dict = {"ain't": "is not", "aren't": "are not", "can't": "cannot", "'cause": "because",
+                "could've": "could have", "couldn't": "could not", "didn't": "did not", "doesn't": "does not",
+                "don't": "do not", "hadn't": "had not", "hasn't": "has not", "haven't": "have not", "he'd": "he would",
+                "he'll": "he will", "he's": "he is", "how'd": "how did", "how'd'y": "how do you", "how'll": "how will",
+                "how's": "how is", "I'd": "I would", "I'd've": "I would have", "I'll": "I will",
+                "I'll've": "I will have", "I'm": "I am", "I've": "I have", "i'd": "i would", "i'd've": "i would have",
+                "i'll": "i will", "i'll've": "i will have", "i'm": "i am", "i've": "i have", "isn't": "is not",
+                "it'd": "it would", "it'd've": "it would have", "it'll": "it will", "it'll've": "it will have",
+                "it's": "it is", "let's": "let us", "ma'am": "madam", "mayn't": "may not", "might've": "might have",
+                "mightn't": "might not", "mightn't've": "might not have", "must've": "must have", "mustn't": "must not",
+                "mustn't've": "must not have", "needn't": "need not", "needn't've": "need not have",
+                "o'clock": "of the clock", "oughtn't": "ought not", "oughtn't've": "ought not have",
+                "shan't": "shall not", "sha'n't": "shall not", "shan't've": "shall not have", "she'd": "she would",
+                "she'd've": "she would have", "she'll": "she will", "she'll've": "she will have", "she's": "she is",
+                "should've": "should have", "shouldn't": "should not", "shouldn't've": "should not have",
+                "so've": "so have", "so's": "so as", "this's": "this is", "that'd": "that would",
+                "that'd've": "that would have", "that's": "that is", "there'd": "there would",
+                "there'd've": "there would have", "there's": "there is", "here's": "here is", "they'd": "they would",
+                "they'd've": "they would have", "they'll": "they will", "they'll've": "they will have",
+                "they're": "they are", "they've": "they have", "to've": "to have", "wasn't": "was not",
+                "we'd": "we would", "we'd've": "we would have", "we'll": "we will", "we'll've": "we will have",
+                "we're": "we are", "we've": "we have", "weren't": "were not", "what'll": "what will",
+                "what'll've": "what will have", "what're": "what are", "what's": "what is", "what've": "what have",
+                "when's": "when is", "when've": "when have", "where'd": "where did", "where's": "where is",
+                "where've": "where have", "who'll": "who will", "who'll've": "who will have", "who's": "who is",
+                "who've": "who have", "why's": "why is", "why've": "why have", "will've": "will have",
+                "won't": "will not", "won't've": "will not have", "would've": "would have", "wouldn't": "would not",
+                "wouldn't've": "would not have", "y'all": "you all", "y'all'd": "you all would",
+                "y'all'd've": "you all would have", "y'all're": "you all are", "y'all've": "you all have",
+                "you'd": "you would", "you'd've": "you would have", "you'll": "you will", "you'll've": "you will have",
+                "you're": "you are", "you've": "you have", 'colour': 'color', 'centre': 'center',
+                'favourite': 'favorite', 'travelling': 'traveling', 'counselling': 'counseling', 'theatre': 'theater',
+                'cancelled': 'canceled', 'labour': 'labor', 'organisation': 'organization', 'wwii': 'world war 2',
+                'citicise': 'criticize', 'youtu ': 'youtube ', 'Qoura': 'Quora', 'sallary': 'salary', 'Whta': 'What',
+                'narcisist': 'narcissist', 'howdo': 'how do', 'whatare': 'what are', 'howcan': 'how can',
+                'howmuch': 'how much', 'howmany': 'how many', 'whydo': 'why do', 'doI': 'do I', 'theBest': 'the best',
+                'howdoes': 'how does', 'mastrubation': 'masturbation', 'mastrubate': 'masturbate',
+                "mastrubating": 'masturbating', 'pennis': 'penis', 'Etherium': 'Ethereum', 'narcissit': 'narcissist',
+                'bigdata': 'big data', '2k17': '2017', '2k18': '2018', 'qouta': 'quota', 'exboyfriend': 'ex boyfriend',
+                'airhostess': 'air hostess', "whst": 'what', 'watsapp': 'whatsapp', 'demonitisation': 'demonetization',
+                'demonitization': 'demonetization', 'demonetisation': 'demonetization'}
+
 
 def _get_mispell(mispell_dict):
     mispell_re = re.compile('(%s)' % '|'.join(mispell_dict.keys()))
     return mispell_dict, mispell_re
 
+
 mispellings, mispellings_re = _get_mispell(mispell_dict)
+
+
 def replace_typical_misspell(text):
     def replace(match):
         return mispellings[match.group(0)]
+
     return mispellings_re.sub(replace, text)
+
 
 from sklearn.preprocessing import StandardScaler
 
 
 def add_features(df):
-
-    df['question_text'] = df['question_text'].progress_apply(lambda x:str(x))
+    df['question_text'] = df['question_text'].progress_apply(lambda x: str(x))
     df['total_length'] = df['question_text'].progress_apply(len)
     df['capitals'] = df['question_text'].progress_apply(lambda comment: sum(1 for c in comment if c.isupper()))
-    df['caps_vs_length'] = df.progress_apply(lambda row: float(row['capitals'])/float(row['total_length']),
-                                axis=1)
+    df['caps_vs_length'] = df.progress_apply(lambda row: float(row['capitals']) / float(row['total_length']),
+                                             axis=1)
     df['num_words'] = df.question_text.str.count('\S+')
     df['num_unique_words'] = df['question_text'].progress_apply(lambda comment: len(set(w for w in comment.split())))
     df['words_vs_unique'] = df['num_unique_words'] / df['num_words']
 
     return df
+
 
 def load_and_prec():
     # train_df = pd.read_csv("../input/train.csv")
@@ -271,8 +344,8 @@ def load_and_prec():
     train_df = joblib.load('train.pkl')
     test_df = joblib.load('valid_for_emsemble.pkl')
     # joblib.dump(df_test['target'], 'valid_for_emsemble_label.pkl', compress=3)
-    print("Train shape : ",train_df.shape)
-    print("Test shape : ",test_df.shape)
+    print("Train shape : ", train_df.shape)
+    print("Test shape : ", test_df.shape)
 
     # lower
     train_df["question_text"] = train_df["question_text"].apply(lambda x: x.lower())
@@ -287,14 +360,12 @@ def load_and_prec():
     test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_numbers(x))
 
     # Clean speelings
-    #train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: replace_typical_misspell(x))
-    #test_df["question_text"] = test_df["question_text"].apply(lambda x: replace_typical_misspell(x))
+    # train_df["question_text"] = train_df["question_text"].progress_apply(lambda x: replace_typical_misspell(x))
+    # test_df["question_text"] = test_df["question_text"].apply(lambda x: replace_typical_misspell(x))
 
     ## fill up the missing values
     train_X = train_df["question_text"].fillna("_##_").values
     test_X = test_df["question_text"].fillna("_##_").values
-
-
 
     ###################### Add Features ###############################
     #  https://github.com/wongchunghang/toxic-comment-challenge-lstm/blob/master/toxic_comment_9872_model.ipynb
@@ -323,12 +394,12 @@ def load_and_prec():
     ## Get the target values
     train_y = train_df['target'].values
 
-#     # Splitting to training and a final test set
-#     train_X, x_test_f, train_y, y_test_f = train_test_split(list(zip(train_X,features)), train_y, test_size=0.2, random_state=SEED)
-#     train_X, features = zip(*train_X)
-#     x_test_f, features_t = zip(*x_test_f)
+    #     # Splitting to training and a final test set
+    #     train_X, x_test_f, train_y, y_test_f = train_test_split(list(zip(train_X,features)), train_y, test_size=0.2, random_state=SEED)
+    #     train_X, features = zip(*train_X)
+    #     x_test_f, features_t = zip(*x_test_f)
 
-    #shuffling the data
+    # shuffling the data
     np.random.seed(SEED)
     trn_idx = np.random.permutation(len(train_X))
 
@@ -337,6 +408,8 @@ def load_and_prec():
     features = features[trn_idx]
 
     return train_X, test_X, train_y, features, test_features, tokenizer.word_index
+
+
 #     return train_X, test_X, train_y, x_test_f,y_test_f,features, test_features, features_t, tokenizer.word_index
 #     return train_X, test_X, train_y, tokenizer.word_index
 
@@ -365,9 +438,9 @@ gc.collect()
 
 np.shape(embedding_matrix)
 
-
 splits = list(StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED).split(x_train, y_train))
 splits[:3]
+
 
 # code inspired from: https://github.com/anandsaha/pytorch.cyclic.learning.rate/blob/master/cls.py
 class CyclicLR(object):
@@ -436,7 +509,7 @@ class CyclicLR(object):
         return 1 / (2. ** (x - 1))
 
     def _exp_range_scale_fn(self, x):
-        return self.gamma**(x)
+        return self.gamma ** (x)
 
     def get_lr(self):
         step_size = float(self.step_size)
@@ -454,6 +527,7 @@ class CyclicLR(object):
             lrs.append(lr)
         return lrs
 
+
 import torch as t
 import torch.nn as nn
 import torch.nn.functional as F
@@ -465,9 +539,9 @@ use_pretrained_embedding = True
 hidden_size = 60
 gru_len = hidden_size
 
-Routings = 4 #5
+Routings = 4  # 5
 Num_capsule = 5
-Dim_capsule = 5#16
+Dim_capsule = 5  # 16
 dropout_p = 0.25
 rate_drop_dense = 0.28
 LR = 0.001
@@ -573,6 +647,7 @@ class Caps_Layer(nn.Module):
         scale = t.sqrt(s_squared_norm + T_epsilon)
         return x / scale
 
+
 class Capsule_Main(nn.Module):
     def __init__(self, embedding_matrix=None, vocab_size=None):
         super(Capsule_Main, self).__init__()
@@ -590,6 +665,7 @@ class Capsule_Main(nn.Module):
         content3 = self.caps_layer(content2)
         output = self.dense_layer(content3)
         return output
+
 
 class Attention(nn.Module):
     def __init__(self, feature_dim, step_dim, bias=True, **kwargs):
@@ -632,6 +708,7 @@ class Attention(nn.Module):
         weighted_input = x * torch.unsqueeze(a, -1)
         return torch.sum(weighted_input, 1)
 
+
 class NeuralNet(nn.Module):
     def __init__(self):
         super(NeuralNet, self).__init__()
@@ -652,17 +729,16 @@ class NeuralNet(nn.Module):
         self.lstm_attention = Attention(hidden_size * 2, maxlen)
         self.gru_attention = Attention(hidden_size * 2, maxlen)
         self.bn = nn.BatchNorm1d(16, momentum=0.5)
-        self.linear = nn.Linear(hidden_size*8+3, fc_layer1) #643:80 - 483:60 - 323:40
+        self.linear = nn.Linear(hidden_size * 8 + 3, fc_layer1)  # 643:80 - 483:60 - 323:40
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.1)
-        self.fc = nn.Linear(fc_layer**2,fc_layer)
+        self.fc = nn.Linear(fc_layer ** 2, fc_layer)
         self.out = nn.Linear(fc_layer, 1)
         self.lincaps = nn.Linear(Num_capsule * Dim_capsule, 1)
         self.caps_layer = Caps_Layer()
 
     def forward(self, x):
-
-#         Capsule(num_capsule=10, dim_capsule=10, routings=4, share_weights=True)(x)
+        #         Capsule(num_capsule=10, dim_capsule=10, routings=4, share_weights=True)(x)
 
         h_embedding = self.embedding(x[0])
         h_embedding = torch.squeeze(
@@ -689,8 +765,8 @@ class NeuralNet(nn.Module):
 
         f = torch.tensor(x[1], dtype=torch.float).cuda()
 
-                #[512,160]
-        conc = torch.cat((h_lstm_atten, h_gru_atten,content3, avg_pool, max_pool,f), 1)
+        # [512,160]
+        conc = torch.cat((h_lstm_atten, h_gru_atten, content3, avg_pool, max_pool, f), 1)
         conc = self.relu(self.linear(conc))
         conc = self.bn(conc)
         conc = self.dropout(conc)
@@ -699,19 +775,23 @@ class NeuralNet(nn.Module):
 
         return out
 
+
 class MyDataset(Dataset):
-    def __init__(self,dataset):
+    def __init__(self, dataset):
         self.dataset = dataset
 
     def __getitem__(self, index):
         data, target = self.dataset[index]
 
         return data, target, index
+
     def __len__(self):
         return len(self.dataset)
 
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
+
 
 # matrix for the out-of-fold predictions
 train_preds = np.zeros((len(x_train)))
@@ -733,7 +813,6 @@ test_loader = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=F
 avg_losses_f = []
 avg_val_losses_f = []
 
-
 for i, (train_idx, valid_idx) in enumerate(splits):
     # split data in train / validation according to the KFold indeces
     # also, convert them to a torch tensor and store them on the GPU (done with .cuda())
@@ -749,7 +828,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     x_val_fold = torch.tensor(x_train[valid_idx.astype(int)], dtype=torch.long).cuda()
     y_val_fold = torch.tensor(y_train[valid_idx.astype(int), np.newaxis], dtype=torch.float32).cuda()
 
-#     model = BiLSTM(lstm_layer=2,hidden_dim=40,dropout=DROPOUT).cuda()
+    #     model = BiLSTM(lstm_layer=2,hidden_dim=40,dropout=DROPOUT).cuda()
     model = NeuralNet()
 
     # make sure everything in the model is running on the GPU
@@ -763,12 +842,12 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     step_size = 300
     base_lr, max_lr = 0.001, 0.003
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                             lr=max_lr)
+                                 lr=max_lr)
 
     ################################################################################################
     scheduler = CyclicLR(optimizer, base_lr=base_lr, max_lr=max_lr,
-               step_size=step_size, mode='exp_range',
-               gamma=0.99994)
+                         step_size=step_size, mode='exp_range',
+                         gamma=0.99994)
     ###############################################################################################
 
     train = torch.utils.data.TensorDataset(x_train_fold, y_train_fold)
@@ -782,7 +861,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
 
     valid_loader = torch.utils.data.DataLoader(valid, batch_size=batch_size, shuffle=False)
 
-    print('Fold {}'.format(i+1))
+    print('Fold {}'.format(i + 1))
     for epoch in range(n_epochs):
         # set train mode of the model. This enables operations which are only applied during training like dropout
         start_time = time.time()
@@ -793,7 +872,7 @@ for i, (train_idx, valid_idx) in enumerate(splits):
             # Forward pass: compute predicted y by passing x to the model.
             ################################################################################################
             f = kfold_X_features[index]
-            y_pred = model([x_batch,f])
+            y_pred = model([x_batch, f])
             ################################################################################################
 
             ################################################################################################
@@ -801,7 +880,6 @@ for i, (train_idx, valid_idx) in enumerate(splits):
             if scheduler:
                 scheduler.batch_step()
             ################################################################################################
-
 
             # Compute and print loss.
             loss = loss_fn(y_pred, y_batch)
@@ -828,10 +906,10 @@ for i, (train_idx, valid_idx) in enumerate(splits):
         avg_val_loss = 0.
         for i, (x_batch, y_batch, index) in enumerate(valid_loader):
             f = kfold_X_valid_features[index]
-            y_pred = model([x_batch,f]).detach()
+            y_pred = model([x_batch, f]).detach()
 
             avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
-            valid_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+            valid_preds_fold[i * batch_size:(i + 1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
         elapsed_time = time.time() - start_time
         print('Epoch {}/{} \t loss={:.4f} \t val_loss={:.4f} \t time={:.2f}s'.format(
@@ -840,32 +918,34 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     avg_val_losses_f.append(avg_val_loss)
     # predict all samples in the test set batch per batch
     for i, (x_batch,) in enumerate(test_loader):
-        f = test_features[i * batch_size:(i+1) * batch_size]
-        y_pred = model([x_batch,f]).detach()
+        f = test_features[i * batch_size:(i + 1) * batch_size]
+        y_pred = model([x_batch, f]).detach()
 
-        test_preds_fold[i * batch_size:(i+1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
+        test_preds_fold[i * batch_size:(i + 1) * batch_size] = sigmoid(y_pred.cpu().numpy())[:, 0]
 
     train_preds[valid_idx] = valid_preds_fold
     test_preds += test_preds_fold / len(splits)
 
-print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f),np.average(avg_val_losses_f)))
+print('All \t loss={:.4f} \t val_loss={:.4f} \t '.format(np.average(avg_losses_f), np.average(avg_val_losses_f)))
+
 
 # x_train, x_test_f, y_train, y_test_f
 
 
-def bestThresshold(y_train,train_preds):
-    tmp = [0,0,0] # idx, cur, max
+def bestThresshold(y_train, train_preds):
+    tmp = [0, 0, 0]  # idx, cur, max
     delta = 0
     for tmp[0] in tqdm(np.arange(0.1, 0.501, 0.01)):
-        tmp[1] = f1_score(y_train, np.array(train_preds)>tmp[0])
+        tmp[1] = f1_score(y_train, np.array(train_preds) > tmp[0])
         if tmp[1] > tmp[2]:
             delta = tmp[0]
             tmp[2] = tmp[1]
     print('best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, tmp[2]))
     return delta
-delta = bestThresshold(y_train,train_preds)
+
+
+delta = bestThresshold(y_train, train_preds)
 
 y_te = joblib.load('valid_for_emsemble_label.pkl').values
 f_score = f1_score(y_te, np.array(test_preds) > delta)
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
-
