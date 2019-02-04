@@ -1757,9 +1757,24 @@ delta, f_score = bestThresshold(y_va, va_preds_merged)
 print('[validation] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
 y_te = joblib.load('valid_for_emsemble_label.pkl').values
-f_score = f1_score(y_te, np.array(te_preds_merged) > delta)
+
+f_score = f1_score(y_te[:len(y_te)/4], np.array(te_preds_merged[:len(te_preds_merged)/4]) > delta)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+delta, f_score = bestThresshold(y_te[:len(y_te)/4], te_preds_merged[:len(y_te)/4])
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
-delta, f_score = bestThresshold(y_te, te_preds_merged)
+f_score = f1_score(y_te[len(y_te)/4:len(y_te)/4 * 2], np.array(te_preds_merged[len(y_te)/4:len(y_te)/4 * 2]) > delta)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+delta, f_score = bestThresshold(y_te[len(y_te)/4:len(y_te)/4 * 2], te_preds_merged[len(y_te)/4:len(y_te)/4 * 2])
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+
+f_score = f1_score(y_te[len(y_te)/4 * 2:len(y_te)/4 * 3], np.array(te_preds_merged[len(y_te)/4 * 2:len(y_te)/4 * 3]) > delta)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+delta, f_score = bestThresshold(y_te[len(y_te)/4 * 2:len(y_te)/4 * 3], te_preds_merged[len(y_te)/4 * 2:len(y_te)/4 * 3])
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+
+f_score = f1_score(y_te[len(y_te)/4 * 3:len(y_te)/4 * 4], np.array(te_preds_merged[len(y_te)/4 * 3:len(y_te)/4 * 4]) > delta)
+print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
+delta, f_score = bestThresshold(y_te[len(y_te)/4 * 3:len(y_te)/4 * 4], te_preds_merged[len(y_te)/4 * 3:len(y_te)/4 * 4])
 print('[test] best threshold is {:.4f} with F1 score: {:.4f}'.format(delta, f_score))
 
