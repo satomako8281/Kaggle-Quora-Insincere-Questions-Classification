@@ -128,6 +128,7 @@ from sklearn.externals import joblib
 joblib.dump(df_train, 'train.pkl', compress=3)
 joblib.dump(df_test, 'valid_for_emsemble.pkl', compress=3)
 joblib.dump(df_test['target'], 'valid_for_emsemble_label.pkl', compress=3)
+df = pd.concat([df_train, df_test], sort=True)
 
 
 def build_vocab(texts):
@@ -153,22 +154,29 @@ def build_vocab(texts):
                 vocab[word] = 1
     return vocab
 
+
 def known_contractions(embed):
     known = []
     for contract in contraction_mapping:
         if contract in embed:
             known.append(contract)
     return known
+
+
 def clean_contractions(text, mapping):
     specials = ["’", "‘", "´", "`"]
     for s in specials:
         text = text.replace(s, "'")
     text = ' '.join([mapping[t] if t in mapping else t for t in text.split(" ")])
     return text
+
+
 def correct_spelling(x, dic):
     for word in dic.keys():
         x = x.replace(word, dic[word])
     return x
+
+
 def unknown_punct(embed, punct):
     unknown = ''
     for p in punct:
@@ -177,12 +185,14 @@ def unknown_punct(embed, punct):
             unknown += ' '
     return unknown
 
+
 def clean_numbers(x):
     x = re.sub('[0-9]{5,}', '#####', x)
     x = re.sub('[0-9]{4}', '####', x)
     x = re.sub('[0-9]{3}', '###', x)
     x = re.sub('[0-9]{2}', '##', x)
     return x
+
 
 def clean_special_chars(text, punct, mapping):
     for p in mapping:
@@ -191,17 +201,21 @@ def clean_special_chars(text, punct, mapping):
     for p in punct:
         text = text.replace(p, ' {} '.format(p))
 
-    specials = {'\u200b': ' ', '…': ' ... ', '\ufeff': '', 'करना': '', 'है': ''}  # Other special characters that I have to deal with in last
+    specials = {'\u200b': ' ', '…': ' ... ', '\ufeff': '', 'करना': '',
+                'है': ''}  # Other special characters that I have to deal with in last
     for s in specials:
         text = text.replace(s, specials[s])
 
     return text
+
+
 def add_lower(embedding, vocab):
     count = 0
     for word in vocab:
         if word in embedding and word.lower() not in embedding:
             embedding[word.lower()] = embedding[word]
             count += 1
+    print("Added {} words to embedding".format(count))
 
 
  puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=', '#', '*', '+', '\\', '•',  '~', '@', '£',
