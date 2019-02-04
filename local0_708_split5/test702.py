@@ -694,6 +694,31 @@ class Attention(nn.Module):
         return torch.sum(weighted_input, 1)
 
 
+class BiLSTM(nn.Module):
+    def __init__(self, embedding_matrix, static=True, hidden_dim=128, lstm_layer=2, dropout=0.2):
+        super(BiLSTM, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.dropout = nn.Dropout(p=dropout)
+
+        self.embedding = nn.Embedding(max_features, embed_size)
+        self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
+
+        if static:
+            self.embedding.weight.requires_grad = False
+        self.lstm = nn.LSTM(input_size=self.embedding.embedding_dim,
+                            hidden_size=hidden_dim,
+                            num_layers=lstm_layer,
+                            dropout = dropout,
+                            bidirectional=True)
+        self.hidden2label = nn.Linear(hidden_dim*lstm_layer*2, 1)
+
+    def forward(self, sents):
+        x = self.embedding(sents)
+        x = torch.transpose(x, dim0=1, dim1=0)
+        lstm_out, (h_n, c_n) = self.lstm(x)
+        y = self.hidden2label(self.dropout(torch.cat([c_n[i,:, :] for i in range(c_n.shape[0])], dim=1)))
+        return y
+
 class NeuralNet(nn.Module):
     def __init__(self):
         super(NeuralNet, self).__init__()
@@ -813,11 +838,11 @@ for i, (train_idx, valid_idx) in enumerate(splits):
     x_val_fold = torch.tensor(x_train[valid_idx.astype(int)], dtype=torch.long).cuda()
     y_val_fold = torch.tensor(y_train[valid_idx.astype(int), np.newaxis], dtype=torch.float32).cuda()
 
-    #     model = BiLSTM(lstm_layer=2,hidden_dim=40,dropout=DROPOUT).cuda()
-    model = NeuralNet()
+    model = BiLSTM(embedding_matrix).cuda()
+    # model = NeuralNet()
 
     # make sure everything in the model is running on the GPU
-    model.cuda()
+    # model.cuda()
 
     # define binary cross entropy loss
     # note that the model returns logit to take advantage of the log-sum-exp trick
