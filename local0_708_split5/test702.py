@@ -713,7 +713,7 @@ class BiLSTM(nn.Module):
         self.hidden2label = nn.Linear(hidden_dim*lstm_layer*2, 1)
 
     def forward(self, sents):
-        x = self.embedding(sents)
+        x = self.embedding(sents[0])
         x = torch.transpose(x, dim0=1, dim1=0)
         lstm_out, (h_n, c_n) = self.lstm(x)
         y = self.hidden2label(self.dropout(torch.cat([c_n[i,:, :] for i in range(c_n.shape[0])], dim=1)))
