@@ -407,13 +407,6 @@ def load_and_prec():
 
 x_train, x_test, y_train, features, test_features, word_index = load_and_prec()
 
-x_train = np.load("x_train.npy")
-x_test = np.load("x_test.npy")
-y_train = np.load("y_train.npy")
-features = np.load("features.npy")
-test_features = np.load("test_features.npy")
-word_index = np.load("word_index.npy").item()
-
 # missing entries in the embedding are set using np.random.normal so we have to seed here too
 seed_everything()
 
